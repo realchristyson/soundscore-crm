@@ -72,6 +72,18 @@ const mapClient = (c) => ({
     date: u.created_at ? new Date(u.created_at).toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"}) : "",
     type: u.type || "info",
   })),
+  roundUpdates: (() => {
+    const map = {};
+    (c.updates || []).forEach(u => {
+      if(u.type === "round_update") {
+        try { const d = JSON.parse(u.text); if(d.round) map[d.round] = {...d, agentFilled: true}; } catch(e){}
+      }
+      if(u.type === "client_report_updated") {
+        try { const d = JSON.parse(u.text); if(d.round) { if(!map[d.round]) map[d.round]={}; map[d.round].clientConfirmed = true; } } catch(e){}
+      }
+    });
+    return map;
+  })(),
 });
 const mapClientList = (c) => ({
   id: c.id,
@@ -257,6 +269,20 @@ tbody td{padding:12px 14px;vertical-align:middle;}
 .info{background:${C.accent}0c;border:1px solid ${C.accent}33;border-radius:12px;
   padding:14px 16px;font-size:12px;color:${C.muted};display:flex;gap:10px;line-height:1.7;}
 .divider{height:1px;background:${C.border};margin:20px 0;}
+.update-gate{background:${C.yellow}09;border:1px solid ${C.yellow}33;border-radius:14px;padding:18px;margin-top:12px;}
+.update-gate-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.lock-block{background:${C.red}08;border:1px dashed ${C.red}30;border-radius:14px;padding:16px;display:flex;align-items:center;gap:12px;margin-top:10px;}
+.update-done{background:${C.green}09;border:1px solid ${C.green}33;border-radius:14px;padding:16px;margin-top:12px;}
+.score-row{display:flex;gap:10px;margin:10px 0;}
+.score-box{flex:1;background:${C.surface};border:1px solid ${C.border};border-radius:10px;padding:10px;text-align:center;}
+.score-delta-pos{color:${C.green};font-size:12px;font-weight:700;}
+.score-delta-neg{color:${C.red};font-size:12px;font-weight:700;}
+.score-delta-zero{color:${C.muted};font-size:12px;}
+.removed-list{display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto;margin:10px 0;}
+.removed-item{display:flex;align-items:center;gap:8px;background:${C.surface};border:1px solid ${C.border};border-radius:8px;padding:8px 12px;cursor:pointer;transition:all .15s;}
+.removed-item:hover{border-color:${C.accent}66;}
+.removed-item.checked{background:${C.green}0a;border-color:${C.green}44;}
+.client-action-card{background:${C.gold}09;border:1px solid ${C.gold}33;border-radius:16px;padding:20px;margin-bottom:16px;}
 .toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:${C.green};color:white;
   padding:12px 22px;border-radius:12px;font-weight:700;font-size:14px;
   box-shadow:0 8px 28px ${C.green}44;animation:fadeUp .3s ease;}
@@ -501,6 +527,17 @@ function ClientOnboarding({ client, onComplete }) {
 }
 /* ─── CLIENT PORTAL ──────────────────────────────────────────────────────── */
 function ClientPortal({ client }) {
+  const [reportConfirming, setReportConfirming] = useState(false);
+  const confirmReportPulled = async () => {
+    setReportConfirming(true);
+    try {
+      await api(`/api/updates/${client.id}`, {
+        method: "POST",
+        body: JSON.stringify({ text: JSON.stringify({round: client.round}), type: "client_report_updated" }),
+      });
+      window.location.reload();
+    } catch(err) { setReportConfirming(false); }
+  };
   const sc = s=>!s?C.muted:s<580?C.red:s<670?C.yellow:s<740?C.accentLt:C.gold;
   const ROUND_INFO = [
     {r:1,l:"Address & Name Removal",i:"📍",d:"Removing all outdated addresses and name aliases from your credit file."},
@@ -546,6 +583,72 @@ function ClientPortal({ client }) {
           ))}
         </div>
       </div>
+      {/* Action required: pull updated credit report */}
+      {(()=>{
+        const currRound=(client.rounds||[]).find(r=>r.num===client.round)||{};
+        const roundUpdate=client.roundUpdates?.[client.round]||{};
+        const needsUpdate=currRound.sentAt&&!roundUpdate.agentFilled;
+        const clientAlreadyConfirmed=roundUpdate.clientConfirmed;
+        if(!needsUpdate||clientAlreadyConfirmed) return null;
+        return(
+          <div className="client-action-card fu" style={{marginBottom:20}}>
+            <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:14}}>
+              <span style={{fontSize:28}}>📊</span>
+              <div>
+                <div style={{fontFamily:"'Clash Display',sans-serif",fontSize:16,fontWeight:700}}>Action Required — Pull Your Updated Report</div>
+                <div style={{fontSize:13,color:C.muted}}>Round {client.round} letters were sent on {currRound.sentAt}. It's time to pull a fresh credit report so your team can review what changed.</div>
+              </div>
+            </div>
+            <div style={{fontSize:13,color:C.muted,marginBottom:14,lineHeight:1.7}}>
+              1. Log into <strong style={{color:C.text}}>IdentityIQ</strong> or <strong style={{color:C.text}}>Smart Credit</strong><br/>
+              2. Pull your updated 3-bureau credit report<br/>
+              3. Click the button below to notify your team
+            </div>
+            <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+              <a href={IIQ_LINK} target="_blank" rel="noreferrer" className="btn btn-iiq" style={{flex:1,minWidth:160}}>
+                🔗 Open IdentityIQ
+              </a>
+              <button className="btn btn-gold" style={{flex:1,minWidth:160}} disabled={reportConfirming} onClick={confirmReportPulled}>
+                {reportConfirming?"Notifying...":"✅ I've Pulled My Report"}
+              </button>
+            </div>
+          </div>
+        );
+      })()}
+      {/* Show round update results to client */}
+      {(()=>{
+        const roundUpdate=client.roundUpdates?.[client.round-1];
+        if(!roundUpdate?.agentFilled||client.round<=1) return null;
+        return(
+          <div style={{background:C.green+"0a",border:`1px solid ${C.green}33`,borderRadius:16,padding:"18px 20px",marginBottom:20}} className="fu">
+            <div style={{fontFamily:"'Clash Display',sans-serif",fontSize:15,fontWeight:700,marginBottom:12}}>🎉 Round {client.round-1} Results</div>
+            <div style={{display:"flex",gap:10,marginBottom:12}}>
+              {[{l:"TransUnion",k:"newTU",orig:client.scores?.transunion},{l:"Experian",k:"newEX",orig:client.scores?.experian},{l:"Equifax",k:"newEQ",orig:client.scores?.equifax}].map(b=>{
+                const newS=parseInt(roundUpdate[b.k]);
+                const delta=newS&&b.orig?newS-b.orig:null;
+                return(
+                  <div key={b.k} style={{flex:1,background:C.card,border:`1px solid ${C.border}`,borderRadius:12,padding:"12px",textAlign:"center"}}>
+                    <div style={{fontSize:10,color:C.muted,textTransform:"uppercase",letterSpacing:"1px",marginBottom:4}}>{b.l}</div>
+                    <div style={{fontFamily:"'Clash Display',sans-serif",fontSize:24,fontWeight:700,color:delta>0?C.green:delta<0?C.red:C.text}}>{roundUpdate[b.k]||"—"}</div>
+                    {delta!==null&&<div style={{fontSize:12,fontWeight:700,color:delta>0?C.green:delta<0?C.red:C.muted}}>{delta>0?"+":""}{delta} pts</div>}
+                  </div>
+                );
+              })}
+            </div>
+            {(roundUpdate.removedAccounts||[]).length>0&&(
+              <div>
+                <div style={{fontSize:11,color:C.muted,fontWeight:600,marginBottom:8}}>ACCOUNTS REMOVED</div>
+                <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+                  {roundUpdate.removedAccounts.map((a,i)=>(
+                    <span key={i} className="badge b-green">✓ {a}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {roundUpdate.notes&&<div style={{fontSize:13,color:C.muted,marginTop:10,fontStyle:"italic"}}>{roundUpdate.notes}</div>}
+          </div>
+        );
+      })()}
       <div className="card fu1">
         <div className="ct">🗺️ Your Dispute Journey</div>
         <div className="cs">4 rounds — your team works each one until your report is clean</div>
@@ -760,6 +863,7 @@ function AdminDash({ admin, onLogout }) {
   const [stats, setStats] = useState({total_clients:0,pending_approval:0,active_rounds:0,avg_credit_score:null});
   const [loadingList, setLoadingList] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [roundUpdateDraft, setRoundUpdateDraft] = useState({newTU:"",newEX:"",newEQ:"",removedAccounts:[],notes:""});
   const toast_ = m => { setToast(m); setTimeout(()=>setToast(""),3000); };
   // Fetch clients list
   const fetchClients = async () => {
@@ -955,6 +1059,24 @@ function AdminDash({ admin, onLogout }) {
     } catch(err) {
       toast_("Failed: " + err.message);
     }
+  };
+  // Save round credit report update
+  const saveRoundUpdate = async () => {
+    if(!selDetail) return;
+    const r = selDetail.round;
+    const payload = { ...roundUpdateDraft, round: r };
+    try {
+      await api(`/api/updates/${selDetail.id}`, {
+        method: "POST",
+        body: JSON.stringify({ text: JSON.stringify(payload), type: "round_update" }),
+      });
+      const data = await api(`/api/clients/${selDetail.id}`);
+      const mapped = mapClient(data);
+      setSelDetail(mapped);
+      setEc(JSON.parse(JSON.stringify(mapped)));
+      setRoundUpdateDraft({newTU:"",newEX:"",newEQ:"",removedAccounts:[],notes:""});
+      toast_("✓ Round update saved — next round unlocked");
+    } catch(err) { toast_("Failed: " + err.message); }
   };
   // Approve client
   const approveClient = async () => {
@@ -1442,7 +1564,7 @@ function AdminDash({ admin, onLogout }) {
         <div className="fu">
           <div className="card">
             <div className="ct">🗓️ Round Management</div>
-            <div className="cs">Track each round, mark letters sent, advance when ready</div>
+            <div className="cs">Track each round — a credit report update is required before advancing</div>
             {[
               {r:1,l:"Address & Name Removal",i:"📍"},
               {r:2,l:"605B Compliance Attack",i:"⚖️"},
@@ -1452,6 +1574,11 @@ function AdminDash({ admin, onLogout }) {
               const rData=(d.rounds||[]).find(rd=>rd.num===item.r)||{status:"pending"};
               const done=rData.status==="complete";
               const act=rData.status==="active"||rData.status==="sent"||(rData.status==="pending"&&item.r===d.round);
+              const isCurrent=item.r===d.round;
+              const roundUpdate=d.roundUpdates?.[item.r];
+              const hasUpdate=roundUpdate?.agentFilled;
+              const clientConfirmed=roundUpdate?.clientConfirmed;
+              const negAccts=(d.accounts||[]).filter(a=>a.negative);
               return(
                 <div key={item.r} style={{background:C.surface,border:`1px solid ${done?C.green+"44":act?C.accent+"44":C.border}`,
                   borderRadius:14,padding:18,marginBottom:12}}>
@@ -1463,23 +1590,107 @@ function AdminDash({ admin, onLogout }) {
                         {rData.sentAt&&<div style={{fontSize:11,color:C.muted}}>Letters sent: {rData.sentAt}</div>}
                       </div>
                     </div>
-                    <span className={`badge ${done?"b-green":act?"b-blue":"b-gray"}`}>
-                      {done?"Complete":act?rData.sentAt?"Awaiting Response":"Letters Ready":"Pending"}
+                    <span className={`badge ${done?"b-green":act&&rData.sentAt&&!hasUpdate?"b-yellow":act?"b-blue":"b-gray"}`}>
+                      {done?"Complete":act&&rData.sentAt&&!hasUpdate?"Update Required":act?rData.sentAt?"Awaiting Response":"Letters Ready":"Pending"}
                     </span>
                   </div>
-                  {rData.notes&&<div style={{fontSize:12,color:C.green,marginBottom:8}}>{rData.notes}</div>}
-                  {act&&!rData.sentAt&&d.round===item.r&&(
+                  {/* Mark sent button */}
+                  {act&&!rData.sentAt&&isCurrent&&(
                     <button className="btn btn-p btn-sm" onClick={markRoundSent}>📨 Mark Letters Sent</button>
                   )}
-                  {act&&rData.sentAt&&d.round===item.r&&item.r<4&&(
+                  {/* After sent: show update gate */}
+                  {act&&rData.sentAt&&isCurrent&&!hasUpdate&&(
+                    <div className="update-gate">
+                      <div className="update-gate-header">
+                        <span style={{fontSize:20}}>📋</span>
+                        <div>
+                          <div style={{fontWeight:700,fontSize:13}}>Credit Report Update Required</div>
+                          <div style={{fontSize:12,color:C.muted}}>Enter the new scores and removed accounts before advancing to Round {item.r+1}</div>
+                        </div>
+                      </div>
+                      {clientConfirmed&&<div style={{fontSize:12,color:C.gold,marginBottom:10}}>✅ Client has pulled their updated report</div>}
+                      <div style={{fontSize:12,color:C.muted,marginBottom:8,fontWeight:600}}>NEW SCORES</div>
+                      <div className="score-row">
+                        {[{l:"TransUnion",k:"newTU",orig:d.scores?.transunion},{l:"Experian",k:"newEX",orig:d.scores?.experian},{l:"Equifax",k:"newEQ",orig:d.scores?.equifax}].map(b=>(
+                          <div className="score-box" key={b.k}>
+                            <div style={{fontSize:10,color:C.muted,textTransform:"uppercase",letterSpacing:"1px",marginBottom:6}}>{b.l}</div>
+                            {b.orig&&<div style={{fontSize:10,color:C.muted,marginBottom:4}}>Was: {b.orig}</div>}
+                            <input className="fi" style={{textAlign:"center",fontSize:16,fontWeight:700,padding:"8px"}}
+                              placeholder="—" value={roundUpdateDraft[b.k]}
+                              onChange={e=>setRoundUpdateDraft(x=>({...x,[b.k]:e.target.value}))}/>
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{fontSize:12,color:C.muted,marginBottom:8,fontWeight:600,marginTop:12}}>ACCOUNTS REMOVED THIS ROUND</div>
+                      <div className="removed-list">
+                        {negAccts.length===0&&<div style={{fontSize:12,color:C.muted}}>No negative accounts on file</div>}
+                        {negAccts.map((a,i)=>{
+                          const checked=(roundUpdateDraft.removedAccounts||[]).includes(a.creditor);
+                          return(
+                            <div key={i} className={`removed-item ${checked?"checked":""}`}
+                              onClick={()=>setRoundUpdateDraft(x=>{
+                                const list=x.removedAccounts||[];
+                                return {...x,removedAccounts:checked?list.filter(n=>n!==a.creditor):[...list,a.creditor]};
+                              })}>
+                              <span style={{fontSize:16}}>{checked?"✅":"⬜"}</span>
+                              <div style={{flex:1}}>
+                                <div style={{fontSize:13,fontWeight:600}}>{a.creditor}</div>
+                                <div style={{fontSize:11,color:C.muted}}>${a.balance} · {a.bureau}</div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div style={{marginTop:10}}>
+                        <label className="fl">NOTES / SUMMARY</label>
+                        <textarea className="fi" rows={2} style={{resize:"vertical"}} placeholder="e.g. 3 accounts removed, score up 45 pts..."
+                          value={roundUpdateDraft.notes} onChange={e=>setRoundUpdateDraft(x=>({...x,notes:e.target.value}))}/>
+                      </div>
+                      <button className="btn btn-p" style={{marginTop:12,width:"100%"}} onClick={saveRoundUpdate}>
+                        💾 Save Round {item.r} Update
+                      </button>
+                    </div>
+                  )}
+                  {/* Update saved — show summary + unlock complete */}
+                  {act&&rData.sentAt&&isCurrent&&hasUpdate&&(
                     <div>
-                      <div style={{fontSize:12,color:C.muted,marginBottom:8}}>
-                        ⏳ 30-day response window started {rData.sentAt}
+                      <div className="update-done">
+                        <div style={{fontWeight:700,fontSize:13,marginBottom:10}}>✅ Round {item.r} Update — Filed</div>
+                        <div className="score-row">
+                          {[{l:"TransUnion",k:"newTU",orig:d.scores?.transunion},{l:"Experian",k:"newEX",orig:d.scores?.experian},{l:"Equifax",k:"newEQ",orig:d.scores?.equifax}].map(b=>{
+                            const newS=parseInt(roundUpdate[b.k]);
+                            const delta=newS&&b.orig?newS-b.orig:null;
+                            return(
+                              <div className="score-box" key={b.k}>
+                                <div style={{fontSize:10,color:C.muted,textTransform:"uppercase",letterSpacing:"1px",marginBottom:4}}>{b.l}</div>
+                                <div style={{fontSize:22,fontWeight:700,color:delta>0?C.green:delta<0?C.red:C.text}}>{roundUpdate[b.k]||"—"}</div>
+                                {delta!==null&&<div className={delta>0?"score-delta-pos":delta<0?"score-delta-neg":"score-delta-zero"}>{delta>0?"+":""}{delta} pts</div>}
+                              </div>
+                            );
+                          })}
+                        </div>
+                        {(roundUpdate.removedAccounts||[]).length>0&&(
+                          <div style={{marginTop:10}}>
+                            <div style={{fontSize:11,color:C.muted,fontWeight:600,marginBottom:6}}>ACCOUNTS REMOVED</div>
+                            {roundUpdate.removedAccounts.map((a,i)=>(
+                              <span key={i} className="badge b-green" style={{marginRight:6,marginBottom:4}}>{a}</span>
+                            ))}
+                          </div>
+                        )}
+                        {roundUpdate.notes&&<div style={{fontSize:12,color:C.muted,marginTop:10}}>{roundUpdate.notes}</div>}
                       </div>
-                      <div style={{height:6,background:C.border,borderRadius:3,overflow:"hidden",marginBottom:10}}>
-                        <div style={{height:"100%",width:"35%",background:`linear-gradient(90deg,${C.accent},${C.gold})`,borderRadius:3}}/>
-                      </div>
-                      <button className="btn btn-gold btn-sm" onClick={completeRound}>→ Mark Round {item.r} Complete & Start Round {item.r+1}</button>
+                      {item.r<4&&(
+                        <button className="btn btn-gold" style={{marginTop:12,width:"100%"}} onClick={completeRound}>
+                          → Mark Round {item.r} Complete &amp; Start Round {item.r+1}
+                        </button>
+                      )}
+                    </div>
+                  )}
+                  {/* Lock indicator for future rounds */}
+                  {!act&&!done&&item.r>d.round&&(
+                    <div className="lock-block">
+                      <span style={{fontSize:20}}>🔒</span>
+                      <div style={{fontSize:12,color:C.muted}}>Locked — complete Round {item.r-1} and submit a credit report update to unlock</div>
                     </div>
                   )}
                 </div>
