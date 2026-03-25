@@ -125,7 +125,13 @@ const gen605B = (c, bureau) => {
 const genFactual = (c, bureau) => {
   const negAccts = (c.accounts||[]).filter(a=>a.negative);
   const acctList = negAccts.length ? negAccts.map((a,i)=>`   ${i+1}. ${a.creditor} — Balance: $${a.balance}, Status: ${a.status}`).join("\n") : "   [No accounts listed]";
-  return `${todayStr()}\n\n${c.name}\n${c.currentAddress||"[Current Address]"}\n\n${BUREAU_ADDR[bureau]}\n\nRe: Factual Dispute — Inaccurate Account Information\n    FCRA Section 611\n\nTo Whom It May Concern,\n\nI am formally disputing the accuracy of the following accounts\nappearing on my ${bureau} credit report. The information\nreported is factually inaccurate and cannot be verified.\n\nACCOUNTS BEING DISPUTED:\n${acctList}\n\nUnder FCRA Section 611, I request that you:\n1. Investigate all reported information for accuracy\n2. Provide the method of verification used\n3. Remove or correct all inaccurate data within 30 days\n4. Delete any account that cannot be fully verified\n\nSincerely,\n\n${c.name}\nDOB: ${c.dob||"[DOB]"}\n\nEnclosures: Government-issued ID · Supporting documentation`;
+  const latePayments = (c.latePayments||[]).filter(lp=>!bureau||lp.bureau===bureau||lp.bureau==="All 3"||!lp.bureau);
+  const lpList = latePayments.length ? latePayments.map((lp,i)=>`   ${i+1}. ${lp.creditor} — ${lp.days} days late${lp.date?` (${lp.date})`:""}`).join("\n") : "   [None listed]";
+  const inquiries = (c.inquiries||[]).filter(inq=>!bureau||inq.bureau===bureau||inq.bureau==="All 3"||!inq.bureau);
+  const inqList = inquiries.length ? inquiries.map((inq,i)=>`   ${i+1}. ${inq.name}${inq.date?` — ${inq.date}`:""}`).join("\n") : "   [None listed]";
+  const lpSection = latePayments.length ? `\nLATE PAYMENTS TO DISPUTE:\n${lpList}\n` : "";
+  const inqSection = inquiries.length ? `\nHARD INQUIRIES TO REMOVE:\n${inqList}\n` : "";
+  return `${todayStr()}\n\n${c.name}\n${c.currentAddress||"[Current Address]"}\n\n${BUREAU_ADDR[bureau]}\n\nRe: Factual Dispute — Inaccurate Account Information\n    FCRA Section 611\n\nTo Whom It May Concern,\n\nI am formally disputing the accuracy of the following accounts\nappearing on my ${bureau} credit report. The information\nreported is factually inaccurate and cannot be verified.\n\nACCOUNTS BEING DISPUTED:\n${acctList}\n${lpSection}${inqSection}\nUnder FCRA Section 611, I request that you:\n1. Investigate all reported information for accuracy\n2. Provide the method of verification used\n3. Remove or correct all inaccurate data within 30 days\n4. Delete any account that cannot be fully verified\n5. Remove all unauthorized or unrecognized hard inquiries\n\nSincerely,\n\n${c.name}\nDOB: ${c.dob||"[DOB]"}\n\nEnclosures: Government-issued ID · Supporting documentation`;
 };
 const genAdvanced = (c, bureau) => {
   const negAccts = (c.accounts||[]).filter(a=>a.negative);
@@ -863,6 +869,7 @@ function AdminDash({ admin, onLogout }) {
   const [stats, setStats] = useState({total_clients:0,pending_approval:0,active_rounds:0,avg_credit_score:null});
   const [loadingList, setLoadingList] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [acctTab, setAcctTab] = useState("negative");
   const [roundUpdateDraft, setRoundUpdateDraft] = useState({newTU:"",newEX:"",newEQ:"",removedAccounts:[],notes:""});
   const toast_ = m => { setToast(m); setTimeout(()=>setToast(""),3000); };
   // Fetch clients list
@@ -1001,6 +1008,29 @@ function AdminDash({ admin, onLogout }) {
         method: "PUT",
         body: JSON.stringify({
           variants: ec.nameVariants || [],
+        }),
+      });
+      // Sync late payments
+      await api(`/api/late-payments/${ec.id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          latePayments: (ec.latePayments || []).map(lp => ({
+            creditor: lp.creditor || "",
+            days_late: lp.days || "30",
+            bureau: lp.bureau || "",
+            date: lp.date || "",
+          })),
+        }),
+      });
+      // Sync inquiries
+      await api(`/api/inquiries/${ec.id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          inquiries: (ec.inquiries || []).map(inq => ({
+            company: inq.name || "",
+            inquiry_date: inq.date || "",
+            bureau: inq.bureau || "",
+          })),
         }),
       });
       // Refresh detail
@@ -1456,82 +1486,133 @@ function AdminDash({ admin, onLogout }) {
       {/* ACCOUNTS VIEW */}
       {tab==="accounts"&&(
         <div className="fu">
-          <div className="card" style={{borderColor:neg.length?C.red+"44":C.border}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
-              <div><div className="ct">⚠️ Negative Accounts</div><div style={{fontSize:12,color:C.muted}}>Round 2 dispute targets</div></div>
-              <span className="badge b-red">{neg.length}</span>
-            </div>
-            {neg.length>0?(
-              <div className="tw">
-                <table>
-                  <thead><tr><th>Creditor</th><th>Type</th><th>Balance</th><th>Status</th><th>Bureau</th></tr></thead>
-                  <tbody>
-                    {neg.map((a,i)=>(
-                      <tr key={i} style={{background:C.red+"06"}}>
-                        <td style={{fontWeight:700}}>{a.creditor}</td>
-                        <td><span className="badge b-gray">{a.type}</span></td>
-                        <td style={{fontFamily:"monospace",color:C.red,fontWeight:700}}>${parseFloat(a.balance||0).toLocaleString()}</td>
-                        <td><span className="badge b-red">{a.status}</span></td>
-                        <td style={{fontSize:11,color:C.muted}}>{a.bureau}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ):<div style={{textAlign:"center",padding:24,color:C.muted,fontSize:13}}>✅ No negative accounts entered yet</div>}
+          {/* Sub-tab navigation */}
+          <div style={{display:"flex",gap:4,background:C.surface,borderRadius:14,padding:4,marginBottom:16}}>
+            {[
+              {key:"negative",label:"⚠️ Negative",count:neg.length,color:C.red},
+              {key:"positive",label:"✅ Positive",count:pos.length,color:C.green},
+              {key:"latePayments",label:"🕐 Late Payments",count:(d.latePayments||[]).length,color:C.yellow},
+              {key:"inquiries",label:"🔍 Hard Inquiries",count:(d.inquiries||[]).length,color:C.muted},
+            ].map(t=>(
+              <button key={t.key} onClick={()=>setAcctTab(t.key)}
+                style={{flex:1,padding:"9px 6px",border:"none",borderRadius:10,cursor:"pointer",
+                  fontFamily:"'Outfit',sans-serif",fontSize:12,fontWeight:700,transition:"all .2s",
+                  background:acctTab===t.key?C.accent:"transparent",
+                  color:acctTab===t.key?"white":C.muted,
+                  boxShadow:acctTab===t.key?`0 4px 12px ${C.accent}44`:"none"}}>
+                {t.label}
+                {t.count>0&&<span style={{marginLeft:5,background:acctTab===t.key?"rgba(255,255,255,.25)":t.color+"22",
+                  color:acctTab===t.key?"white":t.color,borderRadius:20,padding:"1px 7px",fontSize:11}}>{t.count}</span>}
+              </button>
+            ))}
           </div>
-          <div className="card" style={{borderColor:C.green+"33"}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
-              <div><div className="ct">✅ Positive Accounts</div><div style={{fontSize:12,color:C.muted}}>Keep in good standing</div></div>
-              <span className="badge b-green">{pos.length}</span>
-            </div>
-            {pos.length>0?(
-              <div className="tw">
-                <table>
-                  <thead><tr><th>Creditor</th><th>Type</th><th>Balance</th><th>Status</th><th>Bureau</th></tr></thead>
-                  <tbody>
-                    {pos.map((a,i)=>(
-                      <tr key={i}>
-                        <td style={{fontWeight:700}}>{a.creditor}</td>
-                        <td><span className="badge b-gray">{a.type}</span></td>
-                        <td style={{fontFamily:"monospace"}}>${parseFloat(a.balance||0).toLocaleString()}</td>
-                        <td><span className="badge b-green">{a.status}</span></td>
-                        <td style={{fontSize:11,color:C.muted}}>{a.bureau}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+
+          {/* Negative Accounts */}
+          {acctTab==="negative"&&(
+            <div className="card" style={{borderColor:neg.length?C.red+"44":C.border}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+                <div><div className="ct">⚠️ Negative Accounts</div><div style={{fontSize:12,color:C.muted}}>Round 2 dispute targets</div></div>
+                <span className="badge b-red">{neg.length}</span>
               </div>
-            ):<div style={{textAlign:"center",padding:24,color:C.muted,fontSize:13}}>No positive accounts entered yet</div>}
-          </div>
-          {(d.latePayments||[]).length>0&&(
-            <div className="card">
-              <div className="ct">⚠️ Late Payments</div>
-              <div className="tw">
-                <table>
-                  <thead><tr><th>Creditor</th><th>Days Late</th><th>Bureau</th></tr></thead>
-                  <tbody>
-                    {(d.latePayments||[]).map((lp,i)=>(
-                      <tr key={i}><td style={{fontWeight:700}}>{lp.creditor}</td><td><span className="badge b-red">{lp.days} days</span></td><td style={{fontSize:11,color:C.muted}}>{lp.bureau}</td></tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              {neg.length>0?(
+                <div className="tw">
+                  <table>
+                    <thead><tr><th>Creditor</th><th>Type</th><th>Balance</th><th>Status</th><th>Bureau</th></tr></thead>
+                    <tbody>
+                      {neg.map((a,i)=>(
+                        <tr key={i} style={{background:C.red+"06"}}>
+                          <td style={{fontWeight:700}}>{a.creditor}</td>
+                          <td><span className="badge b-gray">{a.type}</span></td>
+                          <td style={{fontFamily:"monospace",color:C.red,fontWeight:700}}>${parseFloat(a.balance||0).toLocaleString()}</td>
+                          <td><span className="badge b-red">{a.status}</span></td>
+                          <td style={{fontSize:11,color:C.muted}}>{a.bureau}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ):<div style={{textAlign:"center",padding:24,color:C.muted,fontSize:13}}>✅ No negative accounts entered yet</div>}
             </div>
           )}
-          {(d.inquiries||[]).length>0&&(
-            <div className="card">
-              <div className="ct">🔍 Inquiries</div>
-              <div className="tw">
-                <table>
-                  <thead><tr><th>Company</th><th>Date</th></tr></thead>
-                  <tbody>
-                    {(d.inquiries||[]).map((inq,i)=>(
-                      <tr key={i}><td style={{fontWeight:700}}>{inq.name}</td><td style={{color:C.muted,fontSize:12}}>{inq.date}</td></tr>
-                    ))}
-                  </tbody>
-                </table>
+
+          {/* Positive Accounts */}
+          {acctTab==="positive"&&(
+            <div className="card" style={{borderColor:C.green+"33"}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+                <div><div className="ct">✅ Positive Accounts</div><div style={{fontSize:12,color:C.muted}}>Keep in good standing</div></div>
+                <span className="badge b-green">{pos.length}</span>
               </div>
+              {pos.length>0?(
+                <div className="tw">
+                  <table>
+                    <thead><tr><th>Creditor</th><th>Type</th><th>Balance</th><th>Status</th><th>Bureau</th></tr></thead>
+                    <tbody>
+                      {pos.map((a,i)=>(
+                        <tr key={i}>
+                          <td style={{fontWeight:700}}>{a.creditor}</td>
+                          <td><span className="badge b-gray">{a.type}</span></td>
+                          <td style={{fontFamily:"monospace"}}>${parseFloat(a.balance||0).toLocaleString()}</td>
+                          <td><span className="badge b-green">{a.status}</span></td>
+                          <td style={{fontSize:11,color:C.muted}}>{a.bureau}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ):<div style={{textAlign:"center",padding:24,color:C.muted,fontSize:13}}>No positive accounts entered yet</div>}
+            </div>
+          )}
+
+          {/* Late Payments */}
+          {acctTab==="latePayments"&&(
+            <div className="card" style={{borderColor:C.yellow+"44"}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+                <div><div className="ct">🕐 Late Payments</div><div style={{fontSize:12,color:C.muted}}>Dispute targets — add via Enter Data tab</div></div>
+                <span className="badge" style={{background:C.yellow+"22",color:C.yellow}}>{(d.latePayments||[]).length}</span>
+              </div>
+              {(d.latePayments||[]).length>0?(
+                <div className="tw">
+                  <table>
+                    <thead><tr><th>Creditor</th><th>Days Late</th><th>Bureau</th><th>Date</th></tr></thead>
+                    <tbody>
+                      {(d.latePayments||[]).map((lp,i)=>(
+                        <tr key={i} style={{background:C.yellow+"06"}}>
+                          <td style={{fontWeight:700}}>{lp.creditor}</td>
+                          <td><span className="badge b-red">{lp.days} days</span></td>
+                          <td style={{fontSize:11,color:C.muted}}>{lp.bureau}</td>
+                          <td style={{fontSize:11,color:C.muted}}>{lp.date}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ):<div style={{textAlign:"center",padding:24,color:C.muted,fontSize:13}}>No late payments entered yet — add them in Enter Data</div>}
+            </div>
+          )}
+
+          {/* Hard Inquiries */}
+          {acctTab==="inquiries"&&(
+            <div className="card">
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+                <div><div className="ct">🔍 Hard Inquiries</div><div style={{fontSize:12,color:C.muted}}>Dispute targets — add via Enter Data tab</div></div>
+                <span className="badge b-gray">{(d.inquiries||[]).length}</span>
+              </div>
+              {(d.inquiries||[]).length>0?(
+                <div className="tw">
+                  <table>
+                    <thead><tr><th>Company</th><th>Date</th><th>Bureau</th></tr></thead>
+                    <tbody>
+                      {(d.inquiries||[]).map((inq,i)=>(
+                        <tr key={i}>
+                          <td style={{fontWeight:700}}>{inq.name}</td>
+                          <td style={{color:C.muted,fontSize:12}}>{inq.date}</td>
+                          <td style={{fontSize:11,color:C.muted}}>{inq.bureau}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ):<div style={{textAlign:"center",padding:24,color:C.muted,fontSize:13}}>No inquiries entered yet — add them in Enter Data</div>}
             </div>
           )}
         </div>
