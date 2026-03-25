@@ -111,7 +111,7 @@ const BUREAU_ADDR = {
   Experian:"Experian\nP.O. Box 4500\nAllen, TX 75013",
 };
 const genR1 = (c, bureau) => {
-  const aliases = (c.nameVariants||[]);
+  const aliases = (c.nameVariants||[]).filter(n => n.trim().toLowerCase() !== (c.name||'').trim().toLowerCase());
   const addrsToRemove = (c.previousAddresses||[]);
   const aliasLines = aliases.length ? aliases.map(n=>`   \u2022 ${n}`).join("\n") : "   [None listed]";
   const addrLines = addrsToRemove.length ? addrsToRemove.map(a=>`   \u2022 ${a}`).join("\n") : "   [None listed]";
