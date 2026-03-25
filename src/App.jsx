@@ -1010,29 +1010,33 @@ function AdminDash({ admin, onLogout }) {
           variants: ec.nameVariants || [],
         }),
       });
-      // Sync late payments
-      await api(`/api/late-payments/${ec.id}`, {
-        method: "PUT",
-        body: JSON.stringify({
-          latePayments: (ec.latePayments || []).map(lp => ({
-            creditor: lp.creditor || "",
-            days_late: lp.days || "30",
-            bureau: lp.bureau || "",
-            date: lp.date || "",
-          })),
-        }),
-      });
-      // Sync inquiries
-      await api(`/api/inquiries/${ec.id}`, {
-        method: "PUT",
-        body: JSON.stringify({
-          inquiries: (ec.inquiries || []).map(inq => ({
-            company: inq.name || "",
-            inquiry_date: inq.date || "",
-            bureau: inq.bureau || "",
-          })),
-        }),
-      });
+      // Sync late payments (graceful — new route)
+      try {
+        await api(`/api/late-payments/${ec.id}`, {
+          method: "PUT",
+          body: JSON.stringify({
+            latePayments: (ec.latePayments || []).map(lp => ({
+              creditor: lp.creditor || "",
+              days_late: lp.days || "30",
+              bureau: lp.bureau || "",
+              date: lp.date || "",
+            })),
+          }),
+        });
+      } catch(e) { console.warn("late-payments save:", e.message); }
+      // Sync inquiries (graceful — new route)
+      try {
+        await api(`/api/inquiries/${ec.id}`, {
+          method: "PUT",
+          body: JSON.stringify({
+            inquiries: (ec.inquiries || []).map(inq => ({
+              company: inq.name || "",
+              inquiry_date: inq.date || "",
+              bureau: inq.bureau || "",
+            })),
+          }),
+        });
+      } catch(e) { console.warn("inquiries save:", e.message); }
       // Refresh detail
       const data = await api(`/api/clients/${ec.id}`);
       const mapped = mapClient(data);
