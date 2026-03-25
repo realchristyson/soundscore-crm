@@ -900,15 +900,45 @@ function AdminDash({ admin, onLogout }) {
     setCopied(lbl); setTimeout(()=>setCopied(""),2500);
     toast_("✓ Letter copied to clipboard");
   };
-  const downloadLetter = (txt, round, bureau, clientName) => {
+  const downloadLetter = async (txt, round, bureau, clientName) => {
     const safeName = (clientName||"client").toLowerCase().replace(/\s+/g,"-");
-    const fileName = `Round${round}_${bureau}_${safeName}.txt`;
-    const blob = new Blob([txt], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = fileName; a.click();
-    URL.revokeObjectURL(url);
-    toast_(`⬇️ Downloading ${fileName}`);
+    const fileName = `Round${round}_${bureau}_${safeName}.pdf`;
+    try {
+      // Dynamically load jsPDF from CDN if not already loaded
+      if (!window.jspdf) {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement("script");
+          s.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+          s.onload = resolve; s.onerror = reject;
+          document.head.appendChild(s);
+        });
+      }
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit:"pt", format:"letter" });
+      const margin = 60;
+      const pageW = doc.internal.pageSize.getWidth();
+      const pageH = doc.internal.pageSize.getHeight();
+      const maxW = pageW - margin * 2;
+      doc.setFont("Courier", "normal");
+      doc.setFontSize(10);
+      const lines = doc.splitTextToSize(txt, maxW);
+      let y = margin;
+      lines.forEach(line => {
+        if (y + 14 > pageH - margin) { doc.addPage(); y = margin; }
+        doc.text(line, margin, y);
+        y += 14;
+      });
+      doc.save(fileName);
+      toast_(`⬇️ Downloading ${fileName}`);
+    } catch(err) {
+      // Fallback to txt if PDF fails
+      const blob = new Blob([txt], { type:"text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = fileName.replace(".pdf",".txt"); a.click();
+      URL.revokeObjectURL(url);
+      toast_(`⬇️ Downloading letter`);
+    }
   };
   // Save client data to API
   const save = async () => {
