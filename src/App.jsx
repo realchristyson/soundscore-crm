@@ -1053,34 +1053,33 @@ function AdminDash({ admin, onLogout }) {
   // Mark round sent
   const markRoundSent = async () => {
     if(!selDetail) return;
-    const activeRound = (selDetail.rounds||[]).find(r=>r.num===selDetail.round);
-    if(!activeRound?.id) {
-      // Create the round first
-      try {
+    try {
+      let activeRound = (selDetail.rounds||[]).find(r=>r.num===selDetail.round);
+      if(!activeRound?.id) {
+        // Create the round first, then refresh to get the new ID
         await api(`/api/rounds/${selDetail.id}`, { method: "POST", body: JSON.stringify({}) });
-      } catch(err) { /* round may already exist */ }
-    }
-    const roundToUpdate = (selDetail.rounds||[]).find(r=>r.num===selDetail.round);
-    if(roundToUpdate?.id) {
-      try {
-        await api(`/api/rounds/item/${roundToUpdate.id}`, {
-          method: "PATCH",
-          body: JSON.stringify({ status: "sent" }),
-        });
-        await api(`/api/updates/${selDetail.id}`, {
-          method: "POST",
-          body: JSON.stringify({ text: `Round ${selDetail.round} letters sent to all 3 bureaus`, type: "sent" }),
-        });
-        // Refresh
-        const data = await api(`/api/clients/${selDetail.id}`);
-        const mapped = mapClient(data);
-        setSelDetail(mapped);
-        setEc(JSON.parse(JSON.stringify(mapped)));
-        fetchClients();
-        toast_(`✓ Round ${selDetail.round} marked as sent`);
-      } catch(err) {
-        toast_("Failed: " + err.message);
+        const refreshed = await api(`/api/clients/${selDetail.id}`);
+        const refreshedMapped = mapClient(refreshed);
+        activeRound = (refreshedMapped.rounds||[]).find(r=>r.num===selDetail.round);
       }
+      if(!activeRound?.id) { toast_("Failed: could not create round"); return; }
+      await api(`/api/rounds/item/${activeRound.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ status: "sent" }),
+      });
+      await api(`/api/updates/${selDetail.id}`, {
+        method: "POST",
+        body: JSON.stringify({ text: `Round ${selDetail.round} letters sent to all 3 bureaus`, type: "sent" }),
+      });
+      // Refresh UI
+      const data = await api(`/api/clients/${selDetail.id}`);
+      const mapped = mapClient(data);
+      setSelDetail(mapped);
+      setEc(JSON.parse(JSON.stringify(mapped)));
+      fetchClients();
+      toast_(`✓ Round ${selDetail.round} marked as sent`);
+    } catch(err) {
+      toast_("Failed: " + err.message);
     }
   };
   // Complete round
