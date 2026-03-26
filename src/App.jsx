@@ -56,7 +56,7 @@ const mapClient = (c) => ({
   })),
   latePayments: (c.late_payments || []).map(lp => ({
     id: lp.id, creditor: lp.creditor || "", days: lp.days_late || "30",
-    bureau: lp.bureau || "", date: lp.date || "",
+    bureau: lp.bureau || "", date: lp.reported_date || "",
   })),
   inquiries: (c.inquiries || []).map(inq => ({
     id: inq.id, name: inq.company || "", date: inq.inquiry_date || "", bureau: inq.bureau || "",
