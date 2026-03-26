@@ -1468,6 +1468,7 @@ function AdminDash({ admin, onLogout }) {
                       <option value="Experian">Experian</option>
                       <option value="Equifax">Equifax</option>
                     </select>
+                    <input className="fi" placeholder="Date (e.g. 01/2025)" value={lp.date||""} onChange={e=>updArr("latePayments",i,{...lp,date:e.target.value})} style={{flex:1,minWidth:110}}/>
                     <button className="btn btn-red btn-sm" onClick={()=>delItem("latePayments",i)}>✕</button>
                   </div>
                 ))}
@@ -1477,9 +1478,15 @@ function AdminDash({ admin, onLogout }) {
                 <div className="ct">🔍 Hard Inquiries</div>
                 <div className="cs">From the Inquiries section at the bottom of the report. Leave empty if "None Reported."</div>
                 {(ec.inquiries||[]).map((inq,i)=>(
-                  <div key={i} style={{display:"flex",gap:8,marginBottom:8}}>
-                    <input className="fi" placeholder="Company name" value={inq.name||""} onChange={e=>updArr("inquiries",i,{...inq,name:e.target.value})}/>
-                    <input className="fi" placeholder="Date" value={inq.date||""} onChange={e=>updArr("inquiries",i,{...inq,date:e.target.value})} style={{maxWidth:120}}/>
+                  <div key={i} style={{display:"flex",gap:8,marginBottom:8,flexWrap:"wrap"}}>
+                    <input className="fi" placeholder="Company name" value={inq.name||""} onChange={e=>updArr("inquiries",i,{...inq,name:e.target.value})} style={{flex:2,minWidth:140}}/>
+                    <input className="fi" placeholder="Date (e.g. 03/2026)" value={inq.date||""} onChange={e=>updArr("inquiries",i,{...inq,date:e.target.value})} style={{flex:1,minWidth:120}}/>
+                    <select className="fsel" style={{flex:1,minWidth:120}} value={inq.bureau||""} onChange={e=>updArr("inquiries",i,{...inq,bureau:e.target.value})}>
+                      <option value="">All Bureaus</option>
+                      <option value="TransUnion">TransUnion</option>
+                      <option value="Experian">Experian</option>
+                      <option value="Equifax">Equifax</option>
+                    </select>
                     <button className="btn btn-red btn-sm" onClick={()=>delItem("inquiries",i)}>✕</button>
                   </div>
                 ))}
