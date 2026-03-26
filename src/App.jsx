@@ -310,14 +310,14 @@ const Logo = () => (
 function AuthPage({ mode, onAuth }) {
   const [tab, setTab] = useState("login");
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({firstName:"",lastName:"",email:"",password:""});
+  const [form, setForm] = useState({firstName:"",lastName:"",email:"",phone:"",password:""});
   const [error, setError] = useState("");
   const up = (k,v) => setForm(f=>({...f,[k]:v}));
   const isAdmin = mode === "admin";
   const handleSubmit = async () => {
     setError("");
     if(!form.email || !form.password) { setError("Please fill in all fields."); return; }
-    if(tab==="signup" && !isAdmin && (!form.firstName || !form.lastName)) { setError("Please fill in all fields."); return; }
+    if(tab==="signup" && !isAdmin && (!form.firstName || !form.lastName || !form.phone)) { setError("Please fill in all fields."); return; }
     setLoading(true);
     try {
       if(tab==="login") {
@@ -341,6 +341,7 @@ function AuthPage({ mode, onAuth }) {
             first_name: form.firstName,
             last_name: form.lastName,
             email: form.email,
+            phone: form.phone,
             password: form.password,
           }),
         });
@@ -377,6 +378,10 @@ function AuthPage({ mode, onAuth }) {
             <div className="fg"><label className="fl">Last Name</label>
               <input className="fi" placeholder="Johnson" value={form.lastName} onChange={e=>up("lastName",e.target.value)}/></div>
           </div>
+        )}
+        {tab==="signup" && !isAdmin && (
+          <div className="fg"><label className="fl">Phone Number</label>
+            <input className="fi" type="tel" placeholder="(555) 867-5309" value={form.phone} onChange={e=>up("phone",e.target.value)}/></div>
         )}
         <div className="fg"><label className="fl">Email Address</label>
           <input className="fi" type="email" placeholder="you@email.com" value={form.email} onChange={e=>up("email",e.target.value)}
