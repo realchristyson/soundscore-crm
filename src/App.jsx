@@ -1017,7 +1017,7 @@ function AdminDash({ admin, onLogout }) {
           body: JSON.stringify({
             latePayments: (ec.latePayments || []).map(lp => ({
               creditor: lp.creditor || "",
-              days_late: lp.days || "30",
+              days_late: String(parseInt(lp.days) || 30),
               bureau: lp.bureau || "",
               date: lp.date || "",
             })),
@@ -1460,7 +1460,7 @@ function AdminDash({ admin, onLogout }) {
                   <div key={i} style={{display:"flex",gap:8,marginBottom:10,flexWrap:"wrap"}}>
                     <input className="fi" style={{flex:2,minWidth:120}} placeholder="Creditor" value={lp.creditor||""} onChange={e=>updArr("latePayments",i,{...lp,creditor:e.target.value})}/>
                     <select className="fsel" style={{flex:1,minWidth:90}} value={lp.days||"30"} onChange={e=>updArr("latePayments",i,{...lp,days:e.target.value})}>
-                      {["30","60","90","120"].map(d=><option key={d}>{d} days</option>)}
+                      {["30","60","90","120"].map(d=><option key={d} value={d}>{d} days</option>)}
                     </select>
                     <input className="fi" style={{flex:1,minWidth:100}} placeholder="Bureau" value={lp.bureau||""} onChange={e=>updArr("latePayments",i,{...lp,bureau:e.target.value})}/>
                     <button className="btn btn-red btn-sm" onClick={()=>delItem("latePayments",i)}>✕</button>
