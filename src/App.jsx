@@ -9,9 +9,9 @@ const C = {
 const API = "https://soundscore-backend-production.up.railway.app";
 const IIQ_LINK = "https://member.identityiq.com/sc-securepreferred.aspx?offercode=4312714G";
 const SC_LINK = "https://www.smartcredit.com/join/?pid=17448";
-/* ─── IN-MEMORY TOKEN STORE ──────────────────────────────────────────────── */
-let _token = null;
-const setToken = (t) => { _token = t; };
+/* ─── PERSISTENT TOKEN STORE ─────────────────────────────────────────────── */
+let _token = localStorage.getItem("ss_token") || null;
+const setToken = (t) => { _token = t; if(t) localStorage.setItem("ss_token", t); else localStorage.removeItem("ss_token"); };
 const getToken = () => _token;
 /* ─── API HELPER ─────────────────────────────────────────────────────────── */
 const api = async (path, opts = {}) => {
@@ -1832,7 +1832,12 @@ function AdminDash({ admin, onLogout }) {
 /* ─── ROOT ───────────────────────────────────────────────────────────────── */
 export default function App() {
   const [view, setView] = useState("client");
-  const [user, setUser] = useState(null); // { id, name, email, role, token }
+  const [user, setUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem("ss_user");
+      return stored ? JSON.parse(stored) : null;
+    } catch(e) { return null; }
+  }); // { id, name, email, role, token }
   const [clientData, setClientData] = useState(null); // full client detail for client portal
   const [toast, setToast] = useState("");
   const [loading, setLoading] = useState(false);
@@ -1847,6 +1852,7 @@ export default function App() {
   };
   const handleAuth = (userData) => {
     setUser(userData);
+    localStorage.setItem("ss_user", JSON.stringify(userData));
     if (userData.role === "client") {
       fetchClientData(userData.id);
     }
@@ -1855,8 +1861,15 @@ export default function App() {
     setUser(null);
     setClientData(null);
     setToken(null);
+    localStorage.removeItem("ss_user");
     setView("client");
   };
+  // Restore client data on page load if already logged in as client
+  useEffect(() => {
+    if (user && user.role === "client" && !clientData) {
+      fetchClientData(user.id);
+    }
+  }, []);
   const handleOnboardComplete = () => {
     // Refresh client data after PDF upload
     if (user) {
