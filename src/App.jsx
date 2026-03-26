@@ -1839,10 +1839,21 @@ export default function App() {
   const [view, setView] = useState("client");
   const [user, setUser] = useState(() => {
     try {
+      // Check for token passed via URL from landing page (cross-origin localStorage workaround)
+      const params = new URLSearchParams(window.location.search);
+      const urlToken = params.get('token');
+      if (urlToken) {
+        setToken(urlToken);
+        window.history.replaceState({}, '', '/');
+        const payload = JSON.parse(atob(urlToken.split('.')[1]));
+        const userData = { id: payload.id, name: payload.name, email: payload.email, role: payload.role || 'client' };
+        localStorage.setItem("ss_user", JSON.stringify(userData));
+        return userData;
+      }
       const stored = localStorage.getItem("ss_user");
       return stored ? JSON.parse(stored) : null;
     } catch(e) { return null; }
-  }); // { id, name, email, role, token }
+  }); // { id, name, email, role }
   const [clientData, setClientData] = useState(null); // full client detail for client portal
   const [toast, setToast] = useState("");
   const [loading, setLoading] = useState(false);
