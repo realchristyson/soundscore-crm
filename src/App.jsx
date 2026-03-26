@@ -1019,7 +1019,7 @@ function AdminDash({ admin, onLogout }) {
               creditor: lp.creditor || "",
               days_late: String(parseInt(lp.days) || 30),
               bureau: lp.bureau || "",
-              date: lp.date || "",
+              date: lp.date || null,
             })),
           }),
         });
@@ -1462,7 +1462,12 @@ function AdminDash({ admin, onLogout }) {
                     <select className="fsel" style={{flex:1,minWidth:90}} value={lp.days||"30"} onChange={e=>updArr("latePayments",i,{...lp,days:e.target.value})}>
                       {["30","60","90","120"].map(d=><option key={d} value={d}>{d} days</option>)}
                     </select>
-                    <input className="fi" style={{flex:1,minWidth:100}} placeholder="Bureau" value={lp.bureau||""} onChange={e=>updArr("latePayments",i,{...lp,bureau:e.target.value})}/>
+                    <select className="fsel" style={{flex:1,minWidth:120}} value={lp.bureau||""} onChange={e=>updArr("latePayments",i,{...lp,bureau:e.target.value})}>
+                      <option value="">All Bureaus</option>
+                      <option value="TransUnion">TransUnion</option>
+                      <option value="Experian">Experian</option>
+                      <option value="Equifax">Equifax</option>
+                    </select>
                     <button className="btn btn-red btn-sm" onClick={()=>delItem("latePayments",i)}>✕</button>
                   </div>
                 ))}
