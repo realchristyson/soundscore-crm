@@ -9,6 +9,7 @@ const C = {
 const API = "https://soundscore-backend-production.up.railway.app";
 const IIQ_LINK = "https://member.identityiq.com/sc-securepreferred.aspx?offercode=4312714G";
 const SC_LINK = "https://www.smartcredit.com/join/?pid=17448";
+// GHL round trigger is handled via /api/ghl/send-round (sets soundscore_round field + adds soundscore-round tag)
 /* ─── PERSISTENT TOKEN STORE ─────────────────────────────────────────────── */
 let _token = localStorage.getItem("ss_token") || null;
 const setToken = (t) => { _token = t; if(t) localStorage.setItem("ss_token", t); else localStorage.removeItem("ss_token"); };
@@ -31,6 +32,7 @@ const mapClient = (c) => ({
   lastName: c.last_name || "",
   name: c.name || `${c.first_name || ""} ${c.last_name || ""}`.trim(),
   email: c.email,
+  phone: c.phone || "",
   dob: c.dob || "",
   currentAddress: c.current_address || "",
   status: c.status || "new",
@@ -1087,6 +1089,43 @@ function AdminDash({ admin, onLogout }) {
       toast_("Failed: " + err.message);
     }
   };
+  // Send round letters to client via GHL (Rounds 2-4)
+  // Backend sets soundscore_round custom field + adds soundscore-round tag → triggers "SoundScore - Round Ready" workflow
+  const sendRoundToClient = async (roundNum) => {
+    if(!selDetail) return;
+    try {
+      // Trigger GHL workflow via backend (sets custom field + adds tag)
+      await api(`/api/ghl/send-round`, {
+        method: "POST",
+        body: JSON.stringify({ clientId: selDetail.id, roundNum }),
+      });
+      // Mark round as sent in CRM
+      let activeRound = (selDetail.rounds||[]).find(r=>r.num===selDetail.round);
+      if(!activeRound?.id) {
+        await api(`/api/rounds/${selDetail.id}`, { method: "POST", body: JSON.stringify({}) });
+        const refreshed = await api(`/api/clients/${selDetail.id}`);
+        const refreshedMapped = mapClient(refreshed);
+        activeRound = (refreshedMapped.rounds||[]).find(r=>r.num===selDetail.round);
+      }
+      if(!activeRound?.id) { toast_("Failed: could not create round"); return; }
+      await api(`/api/rounds/item/${activeRound.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ status: "sent" }),
+      });
+      await api(`/api/updates/${selDetail.id}`, {
+        method: "POST",
+        body: JSON.stringify({ text: `Round ${roundNum} instructions sent to client via SMS and email`, type: "sent" }),
+      });
+      const data = await api(`/api/clients/${selDetail.id}`);
+      const mapped = mapClient(data);
+      setSelDetail(mapped);
+      setEc(JSON.parse(JSON.stringify(mapped)));
+      fetchClients();
+      toast_(`✓ Round ${roundNum} sent to client`);
+    } catch(err) {
+      toast_("Failed: " + err.message);
+    }
+  };
   // Complete round
   const completeRound = async () => {
     if(!selDetail) return;
@@ -1281,7 +1320,9 @@ function AdminDash({ admin, onLogout }) {
         <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
           {!d.approved&&<button className="btn btn-green btn-sm" onClick={approveClient}>✓ Approve Client</button>}
           {d.approved&&(currRound.status==="active"||currRound.status==="pending")&&!currRound.sentAt&&(
-            <button className="btn btn-p btn-sm" onClick={markRoundSent}>📨 Mark Round {d.round} Sent</button>
+            d.round === 1
+              ? <button className="btn btn-p btn-sm" onClick={markRoundSent}>📨 Mark Round 1 Sent</button>
+              : <button className="btn btn-p btn-sm" onClick={()=>sendRoundToClient(d.round)}>📤 Send Round {d.round} to Client</button>
           )}
           {d.approved&&currRound.sentAt&&d.round<4&&(
             <button className="btn btn-gold btn-sm" onClick={completeRound}>→ Complete Round {d.round}</button>
@@ -1725,9 +1766,11 @@ function AdminDash({ admin, onLogout }) {
                       {done?"Complete":act&&rData.sentAt&&!hasUpdate?"Update Required":act?rData.sentAt?"Awaiting Response":"Letters Ready":"Pending"}
                     </span>
                   </div>
-                  {/* Mark sent button */}
+                  {/* Mark sent / Send to client button */}
                   {act&&!rData.sentAt&&isCurrent&&(
-                    <button className="btn btn-p btn-sm" onClick={markRoundSent}>📨 Mark Letters Sent</button>
+                    item.r === 1
+                      ? <button className="btn btn-p btn-sm" onClick={markRoundSent}>📨 Mark Letters Sent</button>
+                      : <button className="btn btn-p btn-sm" onClick={()=>sendRoundToClient(item.r)}>📤 Send Round {item.r} to Client</button>
                   )}
                   {/* After sent: show update gate */}
                   {act&&rData.sentAt&&isCurrent&&!hasUpdate&&(
