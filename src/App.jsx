@@ -407,6 +407,27 @@ function ClientOnboarding({ client, onComplete }) {
   const [uploaded, setUploaded] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [drag, setDrag] = useState(false);
+  const [showIIQLogin, setShowIIQLogin] = useState(false);
+  const [iiqUser, setIiqUser] = useState("");
+  const [iiqPass, setIiqPass] = useState("");
+  const [iiqPulling, setIiqPulling] = useState(false);
+  const [iiqConnected, setIiqConnected] = useState(false);
+  const [iiqError, setIiqError] = useState("");
+  const connectIIQ = async () => {
+    if (!iiqUser || !iiqPass) { setIiqError("Enter your IdentityIQ username and password."); return; }
+    setIiqPulling(true); setIiqError("");
+    try {
+      await api(`/api/credit/client-connect`, {
+        method: "POST",
+        body: JSON.stringify({ username: iiqUser, password: iiqPass }),
+      });
+      setIiqConnected(true);
+      setConfirmed(true);
+      setIiqPass("");
+    } catch (err) {
+      setIiqError(err.message || "Could not connect. Check your credentials and try again.");
+    } finally { setIiqPulling(false); }
+  };
   const fileRef = useRef();
   const selectedFile = useRef(null);
   const handleFile = (file) => {
@@ -481,6 +502,46 @@ function ClientOnboarding({ client, onComplete }) {
                 <span style={{marginLeft:"auto",fontSize:18}}>→</span>
               </button>
             </div>
+            {/* Already have an account — connect & auto-import */}
+            <div style={{marginTop:16,borderTop:`1px solid ${C.border}`,paddingTop:16}}>
+              {!iiqConnected ? (
+                <>
+                  <button
+                    onClick={()=>setShowIIQLogin(x=>!x)}
+                    style={{background:"transparent",border:`1px solid ${C.border}`,borderRadius:12,padding:"10px 16px",
+                      color:C.muted,fontSize:13,cursor:"pointer",width:"100%",fontFamily:"'Outfit',sans-serif",
+                      display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                    <span>🔑 I already have an IdentityIQ account</span>
+                    <span style={{fontSize:10}}>{showIIQLogin?"▲":"▼"}</span>
+                  </button>
+                  {showIIQLogin && (
+                    <div style={{marginTop:12,display:"flex",flexDirection:"column",gap:10}}>
+                      <div style={{fontSize:12,color:C.muted,lineHeight:1.6}}>
+                        Enter your credentials and we'll pull your credit report automatically — no PDF download needed.
+                      </div>
+                      <input className="fi" placeholder="IdentityIQ Username" value={iiqUser}
+                        onChange={e=>{setIiqUser(e.target.value);setIiqError("");}}
+                        autoComplete="username"/>
+                      <input className="fi" type="password" placeholder="IdentityIQ Password" value={iiqPass}
+                        onChange={e=>{setIiqPass(e.target.value);setIiqError("");}}
+                        autoComplete="current-password"/>
+                      {iiqError && <div style={{fontSize:12,color:C.red,background:C.red+"12",borderRadius:8,padding:"8px 12px"}}>{iiqError}</div>}
+                      <button className="btn btn-p btn-full" onClick={connectIIQ} disabled={iiqPulling}>
+                        {iiqPulling ? <><Spin/> Connecting & Importing...</> : "🔗 Connect & Import My Credit Data"}
+                      </button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div style={{background:C.green+"12",border:`1px solid ${C.green}44`,borderRadius:12,padding:"12px 16px",display:"flex",alignItems:"center",gap:10}}>
+                  <span style={{fontSize:20}}>✅</span>
+                  <div>
+                    <div style={{fontWeight:700,fontSize:13,color:C.green}}>IdentityIQ Connected!</div>
+                    <div style={{fontSize:12,color:C.muted}}>Your credit data has been imported. Your team can now start working.</div>
+                  </div>
+                </div>
+              )}
+            </div>
             <div style={{marginTop:16,display:"flex",alignItems:"center",gap:12}}>
               <input type="checkbox" id="confirmed" checked={confirmed} onChange={e=>setConfirmed(e.target.checked)}
                 style={{width:18,height:18,accentColor:C.accent,cursor:"pointer"}}/>
@@ -489,12 +550,14 @@ function ClientOnboarding({ client, onComplete }) {
               </label>
             </div>
             <button className="btn btn-p btn-full" style={{marginTop:20}} disabled={!confirmed} onClick={()=>setStep(2)}>
-              Continue to Upload →
+              {iiqConnected ? "Continue →" : "Continue to Upload →"}
             </button>
-            <div className="info" style={{marginTop:16}}>
-              <span>💡</span>
-              <span>After creating your account, log in to IdentityIQ and click <strong style={{color:C.text}}>"Download this report"</strong> to get your PDF.</span>
-            </div>
+            {!iiqConnected && (
+              <div className="info" style={{marginTop:16}}>
+                <span>💡</span>
+                <span>After creating your account, log in to IdentityIQ and click <strong style={{color:C.text}}>"Download this report"</strong> to get your PDF. Or use the "I already have an account" option above to skip the upload.</span>
+              </div>
+            )}
           </>
         )}
         {step===2 && (
@@ -878,6 +941,40 @@ function AdminDash({ admin, onLogout }) {
   const [saving, setSaving] = useState(false);
   const [acctTab, setAcctTab] = useState("negative");
   const [roundUpdateDraft, setRoundUpdateDraft] = useState({newTU:"",newEX:"",newEQ:"",removedAccounts:[],notes:""});
+  const [iiqAdminUser, setIiqAdminUser] = useState("");
+  const [iiqAdminPass, setIiqAdminPass] = useState("");
+  const [iiqAdminPulling, setIiqAdminPulling] = useState(false);
+  const [iiqAdminMsg, setIiqAdminMsg] = useState(null);
+  const [showIIQAdmin, setShowIIQAdmin] = useState(false);
+  const pullIIQAdmin = async () => {
+    if (!sel || !iiqAdminUser || !iiqAdminPass) { setIiqAdminMsg({type:"error",text:"Enter the client's IdentityIQ username and password."}); return; }
+    setIiqAdminPulling(true); setIiqAdminMsg(null);
+    try {
+      const result = await api(`/api/credit/pull-idiq`, {
+        method: "POST",
+        body: JSON.stringify({ clientId: sel, username: iiqAdminUser, password: iiqAdminPass }),
+      });
+      const m = result.data;
+      setEc(prev => ({
+        ...prev,
+        ...(m.name && { name: m.name }),
+        ...(m.dob && { dob: m.dob }),
+        ...(m.currentAddress && { currentAddress: m.currentAddress }),
+        scores: { ...prev?.scores, ...Object.fromEntries(Object.entries(m.scores||{}).filter(([,v])=>v)) },
+        ...(m.nameVariants?.length && { nameVariants: m.nameVariants }),
+        ...(m.currentAddresses?.length && { currentAddresses: m.currentAddresses }),
+        ...(m.previousAddresses?.length && { previousAddresses: m.previousAddresses }),
+        ...(m.accounts?.length && { accounts: m.accounts }),
+        ...(m.latePayments?.length && { latePayments: m.latePayments }),
+        ...(m.inquiries?.length && { inquiries: m.inquiries }),
+      }));
+      setIiqAdminPass("");
+      setShowIIQAdmin(false);
+      setIiqAdminMsg({ type:"success", text:`✅ Imported! Review the data below and hit "Save All Data".` });
+    } catch (err) {
+      setIiqAdminMsg({ type:"error", text: err.message || "Pull failed. Check credentials." });
+    } finally { setIiqAdminPulling(false); }
+  };
   const toast_ = m => { setToast(m); setTimeout(()=>setToast(""),3000); };
   // Fetch clients list
   const fetchClients = async () => {
@@ -1383,6 +1480,45 @@ function AdminDash({ admin, onLogout }) {
       {/* DATA ENTRY */}
       {tab==="data"&&ec&&(
         <div className="fu">
+          {/* ── AUTO-IMPORT BANNER ── */}
+          <div style={{background:`linear-gradient(135deg,#1a56db11,${C.accent}0a)`,border:`1px solid #1a56db44`,borderRadius:16,padding:"16px 20px",marginBottom:16}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:10}}>
+              <div>
+                <div style={{fontWeight:700,fontSize:14,color:"#4d90fe",marginBottom:3}}>🔗 Auto-Import from IdentityIQ</div>
+                <div style={{fontSize:12,color:C.muted}}>Enter the client's credentials to auto-fill all fields below. You can still edit after import.</div>
+              </div>
+              <button onClick={()=>{setShowIIQAdmin(x=>!x);setIiqAdminMsg(null);}}
+                style={{background:showIIQAdmin?"#1a56db22":"#1a56db",color:"white",border:"none",borderRadius:10,
+                  padding:"8px 16px",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"'Outfit',sans-serif",whiteSpace:"nowrap"}}>
+                {showIIQAdmin ? "✕ Cancel" : "Connect IdentityIQ"}
+              </button>
+            </div>
+            {showIIQAdmin && (
+              <div style={{marginTop:14,display:"flex",gap:10,flexWrap:"wrap",alignItems:"flex-end"}}>
+                <div style={{flex:1,minWidth:180}}>
+                  <label className="fl">IdentityIQ Username</label>
+                  <input className="fi" value={iiqAdminUser} placeholder="Client's IIQ username"
+                    onChange={e=>{setIiqAdminUser(e.target.value);setIiqAdminMsg(null);}} autoComplete="off"/>
+                </div>
+                <div style={{flex:1,minWidth:180}}>
+                  <label className="fl">IdentityIQ Password</label>
+                  <input className="fi" type="password" value={iiqAdminPass} placeholder="Client's IIQ password"
+                    onChange={e=>{setIiqAdminPass(e.target.value);setIiqAdminMsg(null);}} autoComplete="off"/>
+                </div>
+                <button className="btn btn-p" style={{padding:"12px 20px",whiteSpace:"nowrap"}} onClick={pullIIQAdmin} disabled={iiqAdminPulling}>
+                  {iiqAdminPulling ? <><Spin/> Importing...</> : "⬇ Pull Report"}
+                </button>
+              </div>
+            )}
+            {iiqAdminMsg && (
+              <div style={{marginTop:12,padding:"10px 14px",borderRadius:10,fontSize:13,
+                background: iiqAdminMsg.type==="success" ? C.green+"15" : C.red+"12",
+                color: iiqAdminMsg.type==="success" ? C.green : C.red,
+                border: `1px solid ${iiqAdminMsg.type==="success" ? C.green+"44" : C.red+"33"}`}}>
+                {iiqAdminMsg.text}
+              </div>
+            )}
+          </div>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,alignItems:"start"}}>
             {/* LEFT: PDF VIEWER — now loads from Supabase */}
             <PdfViewer clientId={d.id} reportUploaded={d.reportUploaded}/>
