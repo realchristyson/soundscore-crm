@@ -475,13 +475,13 @@ function ClientOnboarding({ client, onComplete }) {
               Hi {client.firstName || client.name?.split(" ")[0]}! One quick step.
             </div>
             <div style={{fontSize:14,color:C.muted,lineHeight:1.8,marginBottom:28}}>
-              Before your credit team can start working on your disputes, you need a credit monitoring account. We use <strong style={{color:C.text}}>IdentityIQ</strong> — it gives you access to all 3 bureau reports so we can see everything on your file.
+              Before your credit team can start working on your disputes, you need a credit monitoring account. We use <strong style={{color:C.text}}>IDQ</strong> — it gives you access to all 3 bureau reports so we can see everything on your file.
             </div>
             <div style={{display:"flex",flexDirection:"column",gap:12}}>
               <button className="btn-iiq" onClick={()=>window.open(IIQ_LINK,"_blank")}>
                 <span style={{fontSize:20}}>🔒</span>
                 <div style={{textAlign:"left"}}>
-                  <div style={{fontWeight:700,fontSize:15}}>Create Your IdentityIQ Account</div>
+                  <div style={{fontWeight:700,fontSize:15}}>Create Your IDQ Account</div>
                   <div style={{fontSize:12,opacity:.8,fontWeight:400}}>$1 trial · Tri-bureau report · Takes 2 minutes</div>
                 </div>
                 <span style={{marginLeft:"auto",fontSize:18}}>→</span>
@@ -513,7 +513,7 @@ function ClientOnboarding({ client, onComplete }) {
                     style={{background:"transparent",border:`1px solid ${C.border}`,borderRadius:12,padding:"10px 16px",
                       color:C.muted,fontSize:13,cursor:"pointer",width:"100%",fontFamily:"'Outfit',sans-serif",
                       display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                    <span>🔑 I already have an IdentityIQ account</span>
+                    <span>🔑 I already have an IDQ account</span>
                     <span style={{fontSize:10}}>{showIIQLogin?"▲":"▼"}</span>
                   </button>
                   {showIIQLogin && (
@@ -521,10 +521,10 @@ function ClientOnboarding({ client, onComplete }) {
                       <div style={{fontSize:12,color:C.muted,lineHeight:1.6}}>
                         Enter your credentials and we'll pull your credit report automatically — no PDF download needed.
                       </div>
-                      <input className="fi" placeholder="IdentityIQ Username" value={iiqUser}
+                      <input className="fi" placeholder="IDQ Username" value={iiqUser}
                         onChange={e=>{setIiqUser(e.target.value);setIiqError("");}}
                         autoComplete="username"/>
-                      <input className="fi" type="password" placeholder="IdentityIQ Password" value={iiqPass}
+                      <input className="fi" type="password" placeholder="IDQ Password" value={iiqPass}
                         onChange={e=>{setIiqPass(e.target.value);setIiqError("");}}
                         autoComplete="current-password"/>
                       <input className="fi" placeholder="Last 4 of SSN (e.g. 1234)" value={iiqSsn4}
@@ -542,7 +542,7 @@ function ClientOnboarding({ client, onComplete }) {
                 <div style={{background:C.green+"12",border:`1px solid ${C.green}44`,borderRadius:12,padding:"12px 16px",display:"flex",alignItems:"center",gap:10}}>
                   <span style={{fontSize:20}}>✅</span>
                   <div>
-                    <div style={{fontWeight:700,fontSize:13,color:C.green}}>IdentityIQ Connected!</div>
+                    <div style={{fontWeight:700,fontSize:13,color:C.green}}>IDQ Connected!</div>
                     <div style={{fontSize:12,color:C.muted}}>Your credit data has been imported. Your team can now start working.</div>
                   </div>
                 </div>
@@ -552,7 +552,7 @@ function ClientOnboarding({ client, onComplete }) {
               <input type="checkbox" id="confirmed" checked={confirmed} onChange={e=>setConfirmed(e.target.checked)}
                 style={{width:18,height:18,accentColor:C.accent,cursor:"pointer"}}/>
               <label htmlFor="confirmed" style={{fontSize:13,color:C.muted,cursor:"pointer",lineHeight:1.5}}>
-                I've created my IdentityIQ account and I'm ready to upload my report
+                I've created my IDQ account and I'm ready to upload my report
               </label>
             </div>
             <button className="btn btn-p btn-full" style={{marginTop:20}} disabled={!confirmed} onClick={()=>setStep(2)}>
@@ -561,7 +561,7 @@ function ClientOnboarding({ client, onComplete }) {
             {!iiqConnected && (
               <div className="info" style={{marginTop:16}}>
                 <span>💡</span>
-                <span>After creating your account, log in to IdentityIQ and click <strong style={{color:C.text}}>"Download this report"</strong> to get your PDF. Or use the "I already have an account" option above to skip the upload.</span>
+                <span>After creating your account, log in to IDQ and click <strong style={{color:C.text}}>"Download this report"</strong> to get your PDF. Or use the "I already have an account" option above to skip the upload.</span>
               </div>
             )}
           </>
@@ -573,7 +573,7 @@ function ClientOnboarding({ client, onComplete }) {
               Upload Your Report
             </div>
             <div style={{fontSize:14,color:C.muted,lineHeight:1.8,marginBottom:24}}>
-              Log into IdentityIQ, go to your Credit Report, and click <strong style={{color:C.text}}>"Download this report"</strong>. Then upload that PDF here.
+              Log into IDQ, go to your Credit Report, and click <strong style={{color:C.text}}>"Download this report"</strong>. Then upload that PDF here.
             </div>
             <input ref={fileRef} type="file" accept=".pdf" style={{display:"none"}}
               onChange={e=>handleFile(e.target.files[0])}/>
@@ -589,7 +589,7 @@ function ClientOnboarding({ client, onComplete }) {
                   </div>
                 : <>
                     <div style={{fontSize:40,marginBottom:12}}>📄</div>
-                    <div style={{fontWeight:700,fontSize:16,marginBottom:6}}>Drop your IdentityIQ PDF here</div>
+                    <div style={{fontWeight:700,fontSize:16,marginBottom:6}}>Drop your IDQ PDF here</div>
                     <div style={{fontSize:13,color:C.muted}}>or click to browse</div>
                   </>}
             </div>
@@ -682,13 +682,13 @@ function ClientPortal({ client }) {
               </div>
             </div>
             <div style={{fontSize:13,color:C.muted,marginBottom:14,lineHeight:1.7}}>
-              1. Log into <strong style={{color:C.text}}>IdentityIQ</strong> or <strong style={{color:C.text}}>Smart Credit</strong><br/>
+              1. Log into <strong style={{color:C.text}}>IDQ</strong> or <strong style={{color:C.text}}>Smart Credit</strong><br/>
               2. Pull your updated 3-bureau credit report<br/>
               3. Click the button below to notify your team
             </div>
             <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
               <a href={IIQ_LINK} target="_blank" rel="noreferrer" className="btn btn-iiq" style={{flex:1,minWidth:160}}>
-                🔗 Open IdentityIQ
+                🔗 Open IDQ
               </a>
               <button className="btn btn-gold" style={{flex:1,minWidth:160}} disabled={reportConfirming} onClick={confirmReportPulled}>
                 {reportConfirming?"Notifying...":"✅ I've Pulled My Report"}
@@ -1491,25 +1491,25 @@ function AdminDash({ admin, onLogout }) {
           <div style={{background:`linear-gradient(135deg,#1a56db11,${C.accent}0a)`,border:`1px solid #1a56db44`,borderRadius:16,padding:"16px 20px",marginBottom:16}}>
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:10}}>
               <div>
-                <div style={{fontWeight:700,fontSize:14,color:"#4d90fe",marginBottom:3}}>🔗 Auto-Import from IdentityIQ</div>
+                <div style={{fontWeight:700,fontSize:14,color:"#4d90fe",marginBottom:3}}>🔗 Auto-Import from IDQ</div>
                 <div style={{fontSize:12,color:C.muted}}>Enter the client's credentials to auto-fill all fields below. You can still edit after import.</div>
               </div>
               <button onClick={()=>{setShowIIQAdmin(x=>!x);setIiqAdminMsg(null);}}
                 style={{background:showIIQAdmin?"#1a56db22":"#1a56db",color:"white",border:"none",borderRadius:10,
                   padding:"8px 16px",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"'Outfit',sans-serif",whiteSpace:"nowrap"}}>
-                {showIIQAdmin ? "✕ Cancel" : "Connect IdentityIQ"}
+                {showIIQAdmin ? "✕ Cancel" : "Connect IDQ"}
               </button>
             </div>
             {showIIQAdmin && (
               <div style={{marginTop:14,display:"flex",gap:10,flexWrap:"wrap",alignItems:"flex-end"}}>
                 <div style={{flex:2,minWidth:160}}>
-                  <label className="fl">IdentityIQ Username</label>
-                  <input className="fi" value={iiqAdminUser} placeholder="Client's IIQ username"
+                  <label className="fl">IDQ Username</label>
+                  <input className="fi" value={iiqAdminUser} placeholder="Client's IDQ username"
                     onChange={e=>{setIiqAdminUser(e.target.value);setIiqAdminMsg(null);}} autoComplete="off"/>
                 </div>
                 <div style={{flex:2,minWidth:160}}>
-                  <label className="fl">IdentityIQ Password</label>
-                  <input className="fi" type="password" value={iiqAdminPass} placeholder="Client's IIQ password"
+                  <label className="fl">IDQ Password</label>
+                  <input className="fi" type="password" value={iiqAdminPass} placeholder="Client's IDQ password"
                     onChange={e=>{setIiqAdminPass(e.target.value);setIiqAdminMsg(null);}} autoComplete="off"/>
                 </div>
                 <div style={{flex:1,minWidth:110}}>
