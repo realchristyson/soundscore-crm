@@ -410,16 +410,18 @@ function ClientOnboarding({ client, onComplete }) {
   const [showIIQLogin, setShowIIQLogin] = useState(false);
   const [iiqUser, setIiqUser] = useState("");
   const [iiqPass, setIiqPass] = useState("");
+  const [iiqSsn4, setIiqSsn4] = useState("");
   const [iiqPulling, setIiqPulling] = useState(false);
   const [iiqConnected, setIiqConnected] = useState(false);
   const [iiqError, setIiqError] = useState("");
   const connectIIQ = async () => {
-    if (!iiqUser || !iiqPass) { setIiqError("Enter your IdentityIQ username and password."); return; }
+    if (!iiqUser || !iiqPass || !iiqSsn4) { setIiqError("All three fields are required."); return; }
+    if (iiqSsn4.length !== 4 || !/^\d{4}$/.test(iiqSsn4)) { setIiqError("SSN last 4 must be exactly 4 digits."); return; }
     setIiqPulling(true); setIiqError("");
     try {
       await api(`/api/credit/client-connect`, {
         method: "POST",
-        body: JSON.stringify({ username: iiqUser, password: iiqPass }),
+        body: JSON.stringify({ username: iiqUser, password: iiqPass, ssn4: iiqSsn4 }),
       });
       setIiqConnected(true);
       setConfirmed(true);
@@ -525,6 +527,10 @@ function ClientOnboarding({ client, onComplete }) {
                       <input className="fi" type="password" placeholder="IdentityIQ Password" value={iiqPass}
                         onChange={e=>{setIiqPass(e.target.value);setIiqError("");}}
                         autoComplete="current-password"/>
+                      <input className="fi" placeholder="Last 4 of SSN (e.g. 1234)" value={iiqSsn4}
+                        maxLength={4} inputMode="numeric"
+                        onChange={e=>{setIiqSsn4(e.target.value.replace(/\D/g,"").slice(0,4));setIiqError("");}}
+                        autoComplete="off"/>
                       {iiqError && <div style={{fontSize:12,color:C.red,background:C.red+"12",borderRadius:8,padding:"8px 12px"}}>{iiqError}</div>}
                       <button className="btn btn-p btn-full" onClick={connectIIQ} disabled={iiqPulling}>
                         {iiqPulling ? <><Spin/> Connecting & Importing...</> : "🔗 Connect & Import My Credit Data"}
@@ -943,16 +949,17 @@ function AdminDash({ admin, onLogout }) {
   const [roundUpdateDraft, setRoundUpdateDraft] = useState({newTU:"",newEX:"",newEQ:"",removedAccounts:[],notes:""});
   const [iiqAdminUser, setIiqAdminUser] = useState("");
   const [iiqAdminPass, setIiqAdminPass] = useState("");
+  const [iiqAdminSsn4, setIiqAdminSsn4] = useState("");
   const [iiqAdminPulling, setIiqAdminPulling] = useState(false);
   const [iiqAdminMsg, setIiqAdminMsg] = useState(null);
   const [showIIQAdmin, setShowIIQAdmin] = useState(false);
   const pullIIQAdmin = async () => {
-    if (!sel || !iiqAdminUser || !iiqAdminPass) { setIiqAdminMsg({type:"error",text:"Enter the client's IdentityIQ username and password."}); return; }
+    if (!sel || !iiqAdminUser || !iiqAdminPass || !iiqAdminSsn4) { setIiqAdminMsg({type:"error",text:"Username, password, and last 4 of SSN are all required."}); return; }
     setIiqAdminPulling(true); setIiqAdminMsg(null);
     try {
       const result = await api(`/api/credit/pull-idiq`, {
         method: "POST",
-        body: JSON.stringify({ clientId: sel, username: iiqAdminUser, password: iiqAdminPass }),
+        body: JSON.stringify({ clientId: sel, username: iiqAdminUser, password: iiqAdminPass, ssn4: iiqAdminSsn4 }),
       });
       const m = result.data;
       setEc(prev => ({
@@ -1495,15 +1502,20 @@ function AdminDash({ admin, onLogout }) {
             </div>
             {showIIQAdmin && (
               <div style={{marginTop:14,display:"flex",gap:10,flexWrap:"wrap",alignItems:"flex-end"}}>
-                <div style={{flex:1,minWidth:180}}>
+                <div style={{flex:2,minWidth:160}}>
                   <label className="fl">IdentityIQ Username</label>
                   <input className="fi" value={iiqAdminUser} placeholder="Client's IIQ username"
                     onChange={e=>{setIiqAdminUser(e.target.value);setIiqAdminMsg(null);}} autoComplete="off"/>
                 </div>
-                <div style={{flex:1,minWidth:180}}>
+                <div style={{flex:2,minWidth:160}}>
                   <label className="fl">IdentityIQ Password</label>
                   <input className="fi" type="password" value={iiqAdminPass} placeholder="Client's IIQ password"
                     onChange={e=>{setIiqAdminPass(e.target.value);setIiqAdminMsg(null);}} autoComplete="off"/>
+                </div>
+                <div style={{flex:1,minWidth:110}}>
+                  <label className="fl">Last 4 SSN</label>
+                  <input className="fi" value={iiqAdminSsn4} placeholder="e.g. 1234" maxLength={4} inputMode="numeric"
+                    onChange={e=>{setIiqAdminSsn4(e.target.value.replace(/\D/g,"").slice(0,4));setIiqAdminMsg(null);}} autoComplete="off"/>
                 </div>
                 <button className="btn btn-p" style={{padding:"12px 20px",whiteSpace:"nowrap"}} onClick={pullIIQAdmin} disabled={iiqAdminPulling}>
                   {iiqAdminPulling ? <><Spin/> Importing...</> : "⬇ Pull Report"}
