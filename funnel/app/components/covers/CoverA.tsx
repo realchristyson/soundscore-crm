@@ -1,179 +1,169 @@
 "use client";
 
 /**
- * COVER A — "Ad Manager"
- * Looks like a live Meta Ads Manager screenshot. Tech / data / insider.
+ * COVER A — Brutalist black/green typographic.
+ * Real book cover. Black canvas, giant $5 in money-green, METHOD locked below.
  */
 export default function CoverA({ className = "" }: { className?: string }) {
   return (
     <div
-      className={`relative aspect-[2/3] w-full overflow-hidden rounded-md ${className}`}
+      className={`relative aspect-[2/3] w-full overflow-hidden rounded-md bg-black ${className}`}
       style={{
-        background:
-          "linear-gradient(180deg, #050505 0%, #0a0a0a 60%, #02110A 100%)",
         boxShadow:
-          "0 60px 120px -40px rgba(0,255,127,0.35), 0 30px 80px -20px rgba(8,102,255,0.3), inset 0 0 0 1px rgba(255,255,255,0.06)",
+          "0 60px 120px -40px rgba(0,255,127,0.25), 0 30px 80px -20px rgba(0,0,0,0.9), inset 0 0 0 1px rgba(255,255,255,0.06)",
       }}
     >
+      {/* film grain */}
       <div
         aria-hidden
-        className="absolute inset-0 opacity-30"
+        className="pointer-events-none absolute inset-0 opacity-[0.14] mix-blend-overlay"
         style={{
           backgroundImage:
-            "linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px)",
-          backgroundSize: "6% 6%",
-        }}
-      />
-      <div
-        aria-hidden
-        className="absolute -right-[20%] -top-[20%] size-[60%] rounded-full"
-        style={{
-          background:
-            "radial-gradient(closest-side, rgba(0,255,127,0.35), transparent 70%)",
-          filter: "blur(20px)",
+            "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>\")",
         }}
       />
 
-      <div className="relative flex h-full flex-col p-[6%]">
+      <div className="relative flex h-full flex-col p-[7.5%]">
+        {/* eyebrow */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-[6px]">
-            <div
-              className="flex items-center justify-center rounded-[20%] bg-[#0866FF] text-white"
-              style={{
-                width: "9%",
-                aspectRatio: "1",
-                fontFamily: "var(--font-anton)",
-                fontSize: "clamp(10px, 1.6vw, 22px)",
-              }}
-            >
-              f
-            </div>
-            <span className="mono-accent text-[clamp(8px,1.1vw,15px)] uppercase tracking-[0.25em] text-white/70">
-              Meta Ads Manager
-            </span>
-          </div>
-          <span className="flex items-center gap-[4px] rounded-full border border-money-green/40 bg-money-green/10 px-[8px] py-[3px]">
-            <span className="size-[5px] animate-pulse rounded-full bg-money-green-bright" />
-            <span className="mono-accent text-[clamp(7px,0.85vw,11px)] uppercase tracking-[0.25em] text-money-green-bright">
-              Live
-            </span>
+          <span
+            className="mono-accent uppercase text-white/55"
+            style={{
+              fontSize: "clamp(8px, 1.15vw, 14px)",
+              letterSpacing: "0.45em",
+              fontWeight: 600,
+            }}
+          >
+            The Playbook
+          </span>
+          <span
+            className="mono-accent uppercase text-money-green-bright"
+            style={{
+              fontSize: "clamp(8px, 1.15vw, 14px)",
+              letterSpacing: "0.45em",
+              fontWeight: 600,
+            }}
+          >
+            ● 2026 Edition
           </span>
         </div>
 
-        <div className="mt-[3%] h-px w-full bg-white/10" />
-
-        <div className="mt-[3%] flex gap-[5%]">
-          {["Campaigns", "Ad Sets", "Ads"].map((t, i) => (
+        {/* mega type */}
+        <div className="my-auto -mx-[1%]">
+          <div className="flex items-start gap-[1%]">
             <span
-              key={t}
-              className={`mono-accent text-[clamp(8px,1vw,14px)] uppercase tracking-[0.2em] ${
-                i === 0
-                  ? "border-b border-money-green-bright pb-[6px] text-money-green-bright"
-                  : "text-white/30"
-              }`}
+              className="headline-mega text-money-green-bright"
+              style={{
+                fontSize: "clamp(140px, 38vw, 560px)",
+                lineHeight: 0.78,
+                letterSpacing: "-0.06em",
+              }}
             >
-              {t}
+              $5
             </span>
-          ))}
-        </div>
-
-        <div className="mt-[6%] rounded-md border border-money-green/30 bg-black/60 p-[4%] backdrop-blur-sm">
-          <div className="flex items-center justify-between">
-            <span className="mono-accent text-[clamp(7px,0.9vw,12px)] uppercase tracking-[0.25em] text-gray-text">
-              Campaign Name
-            </span>
-            <span
-              className="mono-accent rounded bg-money-green-bright px-[8px] py-[3px] font-bold uppercase tracking-[0.2em] text-black"
-              style={{ fontSize: "clamp(7px, 0.85vw, 11px)" }}
-            >
-              Active
-            </span>
-          </div>
-
-          <div className="mt-[5%]">
-            <div
-              className="headline-mega text-off-white"
-              style={{ fontSize: "clamp(28px, 6.5vw, 96px)", lineHeight: 0.86 }}
-            >
-              THE
-            </div>
-            <div className="flex items-end gap-[2%]">
+            <div className="flex flex-col pt-[3%]">
               <span
-                className="headline-mega text-money-green-bright"
+                className="mono-accent uppercase text-off-white"
                 style={{
-                  fontSize: "clamp(72px, 18vw, 260px)",
-                  lineHeight: 0.78,
+                  fontSize: "clamp(12px, 2.4vw, 36px)",
+                  letterSpacing: "0.3em",
+                  fontWeight: 700,
                 }}
               >
-                $5
+                A
               </span>
               <span
-                className="mono-accent pb-[3%] text-off-white"
-                style={{ fontSize: "clamp(14px, 2.6vw, 38px)" }}
+                className="headline-mega text-off-white"
+                style={{
+                  fontSize: "clamp(36px, 9vw, 130px)",
+                  lineHeight: 0.85,
+                  letterSpacing: "-0.02em",
+                }}
               >
-                /DAY
+                DAY
               </span>
             </div>
-            <div
-              className="headline-mega -mt-[1%] text-meta-blue-bright"
-              style={{ fontSize: "clamp(28px, 6.5vw, 96px)", lineHeight: 0.86 }}
-            >
-              METHOD
-            </div>
+          </div>
+          <div
+            className="headline-mega text-off-white -mt-[1%]"
+            style={{
+              fontSize: "clamp(48px, 13vw, 200px)",
+              lineHeight: 0.85,
+              letterSpacing: "-0.015em",
+            }}
+          >
+            METHOD
           </div>
 
-          <p className="mono-accent mt-[5%] text-[clamp(7px,0.95vw,13px)] uppercase tracking-[0.2em] text-gray-text">
-            For Independent Hip-Hop &amp; R&amp;B Artists
+          <div
+            className="bg-money-green-bright"
+            style={{
+              height: "clamp(2px, 0.3vw, 4px)",
+              width: "clamp(60px, 9vw, 130px)",
+              marginTop: "clamp(20px, 3vw, 42px)",
+            }}
+          />
+
+          <p
+            className="text-white/85"
+            style={{
+              fontSize: "clamp(11px, 2vw, 28px)",
+              lineHeight: 1.4,
+              fontWeight: 500,
+              letterSpacing: "-0.005em",
+              marginTop: "clamp(14px, 2.2vw, 28px)",
+              maxWidth: "85%",
+            }}
+          >
+            How independent artists turn{" "}
+            <span className="font-bold text-off-white">
+              $5 a day on Meta Ads
+            </span>{" "}
+            into{" "}
+            <span className="font-bold text-off-white">
+              10,000+ monthly listeners
+            </span>{" "}
+            — without boosting another post.
           </p>
         </div>
 
-        <div className="mt-[5%] grid grid-cols-3 gap-[3%]">
-          {[
-            { l: "Spent", v: "$5.00", c: "white" },
-            { l: "Reach", v: "12,400", c: "green" },
-            { l: "CPC", v: "$0.04", c: "white" },
-          ].map((s) => (
-            <div
-              key={s.l}
-              className="rounded border border-white/10 bg-black/40 p-[8%]"
-            >
-              <div className="mono-accent text-[clamp(6px,0.8vw,11px)] uppercase tracking-widest text-gray-text">
-                {s.l}
-              </div>
-              <div
-                className={`mono-accent mt-[8%] font-semibold ${
-                  s.c === "green" ? "text-money-green-bright" : "text-off-white"
-                }`}
-                style={{ fontSize: "clamp(14px, 2.6vw, 36px)" }}
-              >
-                {s.v}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-auto flex items-end justify-between pt-[6%]">
+        {/* author */}
+        <div className="flex items-end justify-between">
           <div>
-            <div className="mono-accent text-[clamp(7px,0.85vw,11px)] uppercase tracking-[0.25em] text-gray-text">
-              Author
+            <div
+              className="mono-accent uppercase text-white/45"
+              style={{
+                fontSize: "clamp(8px, 1vw, 13px)",
+                letterSpacing: "0.5em",
+                fontWeight: 600,
+              }}
+            >
+              By
             </div>
             <div
-              className="mt-[2%] font-semibold text-off-white"
-              style={{ fontSize: "clamp(11px, 1.6vw, 22px)" }}
+              className="headline-mega text-off-white"
+              style={{
+                fontSize: "clamp(22px, 4.8vw, 64px)",
+                lineHeight: 1,
+                letterSpacing: "0.04em",
+                marginTop: "0.4em",
+              }}
             >
-              Chris Tyson
-            </div>
-            <div className="mono-accent text-[clamp(7px,0.85vw,11px)] uppercase tracking-[0.2em] text-money-green-bright">
-              Music Funding Academy
+              CHRIS TYSON
             </div>
           </div>
-          <div className="text-right">
-            <div className="mono-accent rounded border border-white/10 bg-black/50 px-[10px] py-[6px] text-[clamp(7px,0.85vw,11px)] uppercase tracking-[0.2em] text-money-green-bright">
-              v.2026
-            </div>
-            <div className="mono-accent mt-[6px] text-[clamp(6px,0.8vw,10px)] uppercase tracking-[0.25em] text-white/30">
-              Indie Artist Edition
-            </div>
+          <div
+            className="mono-accent uppercase text-right text-white/45"
+            style={{
+              fontSize: "clamp(8px, 1vw, 13px)",
+              letterSpacing: "0.4em",
+              fontWeight: 600,
+              lineHeight: 1.6,
+            }}
+          >
+            No.&nbsp;01
+            <br />
+            The&nbsp;Method
           </div>
         </div>
       </div>

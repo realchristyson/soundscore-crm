@@ -2,17 +2,21 @@
 
 import { motion } from "framer-motion";
 
+/**
+ * Hardcover book mockup — front soft tilt.
+ * Cover A artwork: black canvas, giant $5 in money-green, METHOD in white.
+ */
 export default function EbookMockup() {
   return (
-    <div className="relative flex items-center justify-center [perspective:1400px]">
+    <div className="relative flex items-center justify-center [perspective:1800px]">
       {/* radial glow behind */}
       <div
         aria-hidden
         className="absolute inset-0 -z-10"
         style={{
           background:
-            "radial-gradient(closest-side, rgba(8,102,255,0.45), rgba(0,0,0,0) 60%), radial-gradient(closest-side, rgba(0,255,127,0.35), rgba(0,0,0,0) 70%)",
-          filter: "blur(40px)",
+            "radial-gradient(closest-side, rgba(0,255,127,0.32), rgba(0,0,0,0) 65%), radial-gradient(closest-side, rgba(8,102,255,0.22), rgba(0,0,0,0) 70%)",
+          filter: "blur(50px)",
         }}
       />
 
@@ -23,94 +27,163 @@ export default function EbookMockup() {
         className="relative will-change-transform"
         style={{ transformStyle: "preserve-3d" }}
       >
+        {/* gentle hover, not full rotation — front-tilt stays */}
         <motion.div
-          animate={{ rotateY: [-18, 18, -18], y: [0, -8, 0] }}
-          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
-          className="relative h-[460px] w-[320px] sm:h-[520px] sm:w-[360px]"
-          style={{ transformStyle: "preserve-3d" }}
+          animate={{ y: [0, -8, 0], rotateZ: [0, 0.5, 0] }}
+          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+          className="relative h-[480px] w-[320px] sm:h-[560px] sm:w-[372px]"
+          style={{
+            transformStyle: "preserve-3d",
+            transform: "rotateY(-10deg) rotateX(4deg)",
+          }}
         >
-          {/* Book back */}
+          {/* page edges (right) */}
           <div
-            className="absolute inset-0 rounded-[6px] bg-near-black"
-            style={{ transform: "translateZ(-22px)" }}
-          />
-          {/* Book spine pages */}
-          <div
-            className="absolute inset-y-2 left-0 w-[22px] rounded-l-sm"
+            aria-hidden
+            className="absolute inset-y-1.5 right-0 w-[14px]"
             style={{
+              transform: "rotateY(90deg) translateZ(0)",
+              transformOrigin: "right center",
               background:
-                "repeating-linear-gradient(90deg, #2a2a2a 0px, #1a1a1a 1px, #2a2a2a 2px)",
-              transform: "translateZ(-11px)",
+                "repeating-linear-gradient(180deg, #ece6d8 0 1px, #d6cfba 1px 2px)",
+              boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.25)",
             }}
           />
-          {/* Front cover */}
+
+          {/* spine (left) */}
           <div
-            className="absolute inset-0 overflow-hidden rounded-[6px] border border-white/10 shadow-[0_40px_80px_-30px_rgba(0,255,127,0.5),0_30px_70px_-20px_rgba(8,102,255,0.45)]"
+            aria-hidden
+            className="absolute inset-y-0 left-0 flex w-[34px] items-center justify-center"
             style={{
+              transform: "rotateY(-90deg) translateZ(0)",
+              transformOrigin: "left center",
               background:
-                "linear-gradient(155deg, #050505 0%, #0a0a0a 40%, #00170B 100%)",
+                "linear-gradient(90deg, #000 0%, #0e0e0e 50%, #000 100%)",
+              boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.06)",
+              writingMode: "vertical-rl",
             }}
           >
-            {/* shine */}
+            <span
+              className="font-display text-[14px] font-bold uppercase tracking-[0.05em] text-money-green-bright"
+              style={{ fontFamily: "var(--font-anton)" }}
+            >
+              $5/Day Method
+            </span>
+            <span
+              className="ml-2 font-display text-[11px] uppercase tracking-[0.4em] text-off-white"
+              style={{ fontFamily: "var(--font-anton)" }}
+            >
+              Tyson
+            </span>
+          </div>
+
+          {/* back board */}
+          <div
+            aria-hidden
+            className="absolute inset-0 rounded-[3px] bg-black"
+            style={{ transform: "translateZ(-18px)" }}
+          />
+
+          {/* FRONT COVER */}
+          <div
+            className="absolute inset-0 overflow-hidden rounded-[3px] bg-black shadow-[0_60px_100px_-30px_rgba(0,0,0,0.95),0_0_0_1px_rgba(255,255,255,0.06),0_0_60px_rgba(0,255,127,0.18)]"
+          >
+            {/* subtle film grain */}
             <div
               aria-hidden
-              className="absolute inset-y-0 left-1/3 w-1/4 -skew-x-12 opacity-40"
+              className="pointer-events-none absolute inset-0 opacity-[0.14] mix-blend-overlay"
               style={{
-                background:
-                  "linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0) 100%)",
+                backgroundImage:
+                  "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>\")",
               }}
             />
-            <div className="absolute inset-0 grid-bg opacity-30" />
+            {/* glossy highlight */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 mix-blend-overlay"
+              style={{
+                background:
+                  "linear-gradient(110deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 35%, rgba(0,0,0,0.18) 100%)",
+              }}
+            />
 
-            <div className="relative flex h-full flex-col justify-between p-7">
-              <div>
-                <div className="mono-accent text-[10px] uppercase tracking-[0.3em] text-money-green-bright">
-                  Music Funding Academy · 2026
-                </div>
-                <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-money-green/40 bg-money-green/10 px-2.5 py-1">
-                  <span className="size-1.5 rounded-full bg-money-green-bright" />
-                  <span className="mono-accent text-[10px] uppercase tracking-widest text-money-green-bright">
-                    Indie Artist Edition
-                  </span>
-                </div>
+            <div className="relative flex h-full flex-col p-7">
+              {/* eyebrow */}
+              <div className="flex items-center justify-between">
+                <span
+                  className="mono-accent text-[10px] uppercase tracking-[0.45em] text-white/55"
+                  style={{ fontWeight: 600 }}
+                >
+                  The Playbook
+                </span>
+                <span
+                  className="mono-accent text-[10px] uppercase tracking-[0.45em] text-money-green-bright"
+                  style={{ fontWeight: 600 }}
+                >
+                  ● 2026
+                </span>
               </div>
 
-              <div>
-                <div
-                  className="headline-mega text-white"
-                  style={{ fontSize: "44px", lineHeight: 0.85 }}
-                >
-                  THE
+              {/* mega type block — flex grow */}
+              <div className="my-auto">
+                <div className="flex items-start gap-2">
+                  <span
+                    className="font-display text-[180px] leading-[0.78] tracking-[-0.06em] text-money-green-bright"
+                    style={{ fontFamily: "var(--font-anton)" }}
+                  >
+                    $5
+                  </span>
+                  <div className="flex flex-col pt-2">
+                    <span
+                      className="mono-accent text-[12px] font-bold uppercase tracking-[0.3em] text-off-white"
+                    >
+                      A
+                    </span>
+                    <span
+                      className="font-display text-[44px] leading-[0.85] tracking-[-0.02em] text-off-white"
+                      style={{ fontFamily: "var(--font-anton)" }}
+                    >
+                      DAY
+                    </span>
+                  </div>
                 </div>
                 <div
-                  className="headline-mega text-money-green-bright"
-                  style={{ fontSize: "92px", lineHeight: 0.82 }}
-                >
-                  $5
-                </div>
-                <div
-                  className="headline-mega text-white"
-                  style={{ fontSize: "30px", lineHeight: 1 }}
-                >
-                  /DAY
-                </div>
-                <div
-                  className="headline-mega -mt-1 text-meta-blue-bright"
-                  style={{ fontSize: "44px", lineHeight: 0.9 }}
+                  className="-mt-1 font-display text-[58px] leading-[0.85] tracking-[-0.015em] text-off-white"
+                  style={{ fontFamily: "var(--font-anton)" }}
                 >
                   METHOD
                 </div>
-                <p className="mt-4 max-w-[80%] text-[11px] uppercase tracking-[0.25em] text-gray-text">
-                  The Meta Ads playbook for independent hip-hop &amp; R&amp;B
+
+                <div className="mt-5 h-[3px] w-[44px] bg-money-green-bright" />
+
+                <p className="mt-4 max-w-[88%] text-[11px] font-medium leading-[1.4] text-white/80">
+                  How independent artists turn{" "}
+                  <span className="text-off-white">$5 a day on Meta Ads</span>{" "}
+                  into{" "}
+                  <span className="text-off-white">
+                    10,000+ monthly listeners
+                  </span>
+                  .
                 </p>
               </div>
 
+              {/* author */}
               <div className="flex items-end justify-between">
-                <div className="mono-accent text-[10px] uppercase tracking-widest text-gray-text">
-                  By Chris Tyson
+                <div>
+                  <div className="mono-accent text-[9px] font-semibold uppercase tracking-[0.5em] text-white/45">
+                    By
+                  </div>
+                  <div
+                    className="mt-1 font-display text-[20px] leading-none tracking-[0.04em] text-off-white"
+                    style={{ fontFamily: "var(--font-anton)" }}
+                  >
+                    CHRIS TYSON
+                  </div>
                 </div>
-                <div className="mono-accent rounded border border-white/10 bg-black/50 px-2 py-1 text-[10px] text-money-green-bright">
-                  v.2026
+                <div className="mono-accent text-right text-[9px] font-semibold uppercase tracking-[0.4em] text-white/45">
+                  No.&nbsp;01
+                  <br />
+                  The&nbsp;Method
                 </div>
               </div>
             </div>
