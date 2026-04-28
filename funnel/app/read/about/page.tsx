@@ -5,55 +5,21 @@ import ChapterShell from "../components/ChapterShell";
 export default function About() {
   return (
     <ChapterShell id="about" particleVariant="green">
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          marginBottom: "2.5rem",
-        }}
-      >
-        <div
-          style={{
-            width: 200,
-            height: 200,
-            borderRadius: "50%",
-            overflow: "hidden",
-            border: "3px solid var(--money-green-bright, #00ff7f)",
-            boxShadow:
-              "0 20px 60px -10px rgba(0,255,127,0.45), 0 0 0 6px rgba(0,255,127,0.08)",
-            background:
-              "linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <img
-            src="/images/chris.jpg"
-            alt="Chris Tyson"
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            onError={(e) => {
-              const t = e.currentTarget;
-              t.style.display = "none";
-              const fallback = t.nextElementSibling as HTMLElement | null;
-              if (fallback) fallback.style.display = "flex";
-            }}
-          />
-          <div
-            style={{
-              display: "none",
-              width: "100%",
-              height: "100%",
-              alignItems: "center",
-              justifyContent: "center",
-              fontFamily: "var(--font-anton), sans-serif",
-              fontSize: 80,
-              color: "var(--money-green-bright, #00ff7f)",
-              letterSpacing: "0.04em",
-            }}
-          >
-            CT
+      <div className="chris-portrait-wrap">
+        <div className="chris-portrait-stage">
+          <div className="chris-portrait-halo" aria-hidden />
+          <div className="chris-portrait-glow chris-portrait-glow-green" aria-hidden />
+          <div className="chris-portrait-glow chris-portrait-glow-blue" aria-hidden />
+          <div className="chris-portrait-frame">
+            <img
+              src="/images/chris.jpg"
+              alt="Chris Tyson"
+              className="chris-portrait-img"
+            />
+            <div className="chris-portrait-grain" aria-hidden />
+          </div>
+          <div className="chris-portrait-tag" aria-hidden>
+            <span className="dot" /> CHRIS TYSON · 2026
           </div>
         </div>
       </div>

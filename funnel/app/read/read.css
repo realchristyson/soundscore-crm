@@ -504,3 +504,149 @@
   box-shadow: 0 30px 80px -10px rgba(0, 255, 127, 0.65),
     0 15px 50px -10px rgba(30, 136, 255, 0.6);
 }
+
+/* ============ ABOUT PAGE — CHRIS PORTRAIT ============ */
+.chris-portrait-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0 3rem;
+}
+.chris-portrait-stage {
+  position: relative;
+  width: 320px;
+  height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@media (max-width: 640px) {
+  .chris-portrait-stage { width: 260px; height: 340px; }
+}
+
+/* rotating conic halo behind the photo */
+.chris-portrait-halo {
+  position: absolute;
+  inset: -28px;
+  border-radius: 14px;
+  background: conic-gradient(
+    from 0deg,
+    rgba(0, 255, 127, 0.85) 0deg,
+    rgba(30, 136, 255, 0.85) 90deg,
+    rgba(0, 255, 127, 0.85) 180deg,
+    rgba(30, 136, 255, 0.85) 270deg,
+    rgba(0, 255, 127, 0.85) 360deg
+  );
+  filter: blur(18px);
+  opacity: 0.65;
+  animation: chris-spin 9s linear infinite;
+  z-index: 0;
+}
+@keyframes chris-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* drifting glow blobs */
+.chris-portrait-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: 1;
+}
+.chris-portrait-glow-green {
+  width: 220px; height: 220px;
+  background: rgba(0, 255, 127, 0.55);
+  top: -40px; left: -40px;
+  animation: chris-drift-1 7s ease-in-out infinite alternate;
+}
+.chris-portrait-glow-blue {
+  width: 200px; height: 200px;
+  background: rgba(30, 136, 255, 0.45);
+  bottom: -40px; right: -40px;
+  animation: chris-drift-2 8s ease-in-out infinite alternate;
+}
+@keyframes chris-drift-1 {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(20px, 30px) scale(1.15); }
+}
+@keyframes chris-drift-2 {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(-25px, -20px) scale(1.1); }
+}
+
+/* the actual image frame, no circle */
+.chris-portrait-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 2;
+  box-shadow:
+    0 30px 80px -20px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+.chris-portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* grain on the portrait */
+.chris-portrait-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.18;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
+}
+
+/* corner tag pill */
+.chris-portrait-tag {
+  position: absolute;
+  bottom: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #f5f5f5;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(0, 255, 127, 0.4);
+  border-radius: 999px;
+  padding: 8px 16px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px -10px rgba(0, 255, 127, 0.5);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.chris-portrait-tag .dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00ff7f;
+  box-shadow: 0 0 10px #00ff7f;
+  animation: chris-pulse 1.6s ease-in-out infinite;
+}
+@keyframes chris-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.4; transform: scale(0.85); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chris-portrait-halo,
+  .chris-portrait-glow-green,
+  .chris-portrait-glow-blue,
+  .chris-portrait-tag .dot {
+    animation: none;
+  }
+}
