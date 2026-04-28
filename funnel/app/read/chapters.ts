@@ -52,7 +52,7 @@ export const CHAPTERS: Chapter[] = [
     title: "The $5/Day Setup",
     subtitle: "Account, pixel, page — the foundation",
     href: "/read/ch3",
-    status: "scaffold",
+    status: "full",
     worksheetFields: [
       "Pixel installed on landing page? (yes/no)",
       "Daily test budget you'll commit to: $___",
@@ -66,7 +66,7 @@ export const CHAPTERS: Chapter[] = [
     title: "Targeting That Actually Works",
     subtitle: "Stop guessing — let Meta find your fans",
     href: "/read/ch4",
-    status: "scaffold",
+    status: "full",
     worksheetFields: [
       "Your top 3 sound-alike artists",
       "Your geo: broad or city-targeted?",
@@ -80,7 +80,7 @@ export const CHAPTERS: Chapter[] = [
     title: "The Creative That Sells",
     subtitle: "Hooks, captions, and the 3-second rule",
     href: "/read/ch5",
-    status: "scaffold",
+    status: "full",
     worksheetFields: [
       "Your hook — first 3 seconds: ___",
       "What problem does the song solve for the listener?",
@@ -94,7 +94,7 @@ export const CHAPTERS: Chapter[] = [
     title: "Reading the Numbers",
     subtitle: "The dashboard isn't lying to you. You just can't read it.",
     href: "/read/ch6",
-    status: "scaffold",
+    status: "full",
     worksheetFields: [
       "Your CPM today: $___",
       "Your CTR today: ___%",

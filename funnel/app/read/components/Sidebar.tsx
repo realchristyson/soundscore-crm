@@ -68,7 +68,7 @@ export default function Sidebar() {
           </Link>
         ))}
 
-        <h4>Part 1 — The Lie</h4>
+        <h4>Part 1, The Lie</h4>
         {part1.map((c) => (
           <Link key={c.id} href={c.href} className={isActive(c.href) ? "active" : ""}>
             <span>{c.num}. {c.title}</span>
@@ -76,7 +76,7 @@ export default function Sidebar() {
           </Link>
         ))}
 
-        <h4>Part 2 — The Setup</h4>
+        <h4>Part 2, The Setup</h4>
         {part2.map((c) => (
           <Link key={c.id} href={c.href} className={isActive(c.href) ? "active" : ""}>
             <span>{c.num}. {c.title}</span>
@@ -84,7 +84,7 @@ export default function Sidebar() {
           </Link>
         ))}
 
-        <h4>Part 3 — The System</h4>
+        <h4>Part 3, The System</h4>
         {part3.map((c) => (
           <Link key={c.id} href={c.href} className={isActive(c.href) ? "active" : ""}>
             <span>{c.num}. {c.title}</span>

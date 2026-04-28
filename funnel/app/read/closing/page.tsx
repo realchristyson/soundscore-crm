@@ -18,7 +18,7 @@ export default function Closing() {
       <p>
         Take a second. Acknowledge it. Most artists who buy a book like this
         don&apos;t even open it. The ones who open it skim. The ones who
-        actually finish — like you just did — are in the rare 5%. You earned a
+        actually finish, like you just did, are in the rare 5%. You earned a
         round of applause for that alone.
       </p>
 
@@ -47,7 +47,7 @@ export default function Closing() {
 
       <p>
         $5/day is the start. Once you&apos;re running real ads and seeing real
-        growth, the question becomes — how do you scale this beyond $5/day
+        growth, the question becomes, how do you scale this beyond $5/day
         without burning your savings? How do you fund $1,000/day campaigns?
         How do you build the credit and the capital to run this like a real
         music business?
@@ -56,7 +56,7 @@ export default function Closing() {
       <p>
         That&apos;s what Music Funding Academy is for. It&apos;s where artists
         who are ready to graduate from $5/day go to learn the financial side
-        of the music business — credit repair, business funding, advanced ad
+        of the music business, credit repair, business funding, advanced ad
         strategy, and the community of artists who are actually doing it.
       </p>
 
@@ -67,18 +67,18 @@ export default function Closing() {
       </p>
 
       <p>
-        Until then — run the play. Keep it $5/day. Build slow. Build right.
+        Until then, run the play. Keep it $5/day. Build slow. Build right.
       </p>
 
       <p style={{ marginTop: "2rem" }}>
         Talk soon.
         <br />
-        <strong>— Chris</strong>
+        <strong>, Chris</strong>
       </p>
 
       <div style={{ marginTop: "3rem", textAlign: "center" }}>
         <a
-          href="https://musicfundingacademy.com"
+          href="https://www.musicfundingacademy.com/skool"
           target="_blank"
           rel="noreferrer"
           className="closing-cta"

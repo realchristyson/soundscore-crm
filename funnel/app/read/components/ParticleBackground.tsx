@@ -6,7 +6,7 @@ type Props = { variant?: "green" | "blue" | "mixed" };
 
 export default function ParticleBackground({ variant = "green" }: Props) {
   const particles = useMemo(() => {
-    const glyphs = ["$", "▲", "◆", "+", "—"];
+    const glyphs = ["$", "▲", "◆", "+", ","];
     return Array.from({ length: 18 }).map((_, i) => {
       const left = Math.random() * 100;
       const delay = Math.random() * 22;

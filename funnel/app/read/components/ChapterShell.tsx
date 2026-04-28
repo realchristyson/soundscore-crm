@@ -89,5 +89,5 @@ export default function ChapterShell({ id, children, particleVariant }: Props) {
   );
 }
 
-// Sanity export — keep lint happy if CHAPTERS unused warns.
+// Sanity export, keep lint happy if CHAPTERS unused warns.
 export const _CHAPTERS = CHAPTERS;

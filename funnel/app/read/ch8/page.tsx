@@ -36,7 +36,7 @@ export default function Ch8() {
         bag up.
       </p>
 
-      <ChapterDivider label="Section 1 — The four numbers" />
+      <ChapterDivider label="Section 1, The four numbers" />
 
       <h2 className="read-h2">CPM, CTR, Cost per Result, Frequency</h2>
 
@@ -65,7 +65,7 @@ export default function Ch8() {
         you&apos;re running a Video Views campaign, this is cost per video
         view. If you&apos;re running Traffic, it&apos;s cost per click. If
         you&apos;re running Engagement, it&apos;s cost per engagement.
-        Whatever you optimized for — this is the price tag.
+        Whatever you optimized for, this is the price tag.
       </p>
 
       <p>
@@ -82,7 +82,7 @@ export default function Ch8() {
         only see what matters.
       </Callout>
 
-      <ChapterDivider label="Section 2 — Kill, leave, or scale" />
+      <ChapterDivider label="Section 2, Kill, leave, or scale" />
 
       <h2 className="read-h2">The three decisions you can make</h2>
 
@@ -120,7 +120,7 @@ export default function Ch8() {
         working stops working. Slow is fast.
       </Callout>
 
-      <ChapterDivider label="Section 3 — The doubling formula" />
+      <ChapterDivider label="Section 3, The doubling formula" />
 
       <h2 className="read-h2">How to scale without breaking it</h2>
 
@@ -138,7 +138,7 @@ export default function Ch8() {
         <strong>Step 2.</strong> If after 5 days the numbers are good,
         duplicate the ad set and double the budget. The new copy runs at
         $10/day. Leave the original $5/day version running too. Yes, both at
-        the same time. This is on purpose — it gives Meta two horses to
+        the same time. This is on purpose, it gives Meta two horses to
         race and protects you if the scaled version regresses.
       </p>
 
@@ -148,7 +148,7 @@ export default function Ch8() {
       </p>
 
       <p>
-        <strong>Step 4.</strong> Keep going at intervals — $20 to $50 to
+        <strong>Step 4.</strong> Keep going at intervals, $20 to $50 to
         $100 to $200/day. Always wait at least 3 days between doublings.
         Always keep the lower-budget versions running until you&apos;re sure
         the higher-budget version has stabilized.
@@ -165,13 +165,13 @@ export default function Ch8() {
 
       <Callout variant="pro">
         Don&apos;t scale on weekends. Meta&apos;s algorithm behaves
-        differently on Saturdays and Sundays — different audience behavior,
+        differently on Saturdays and Sundays, different audience behavior,
         different competition, different costs. Scale on Tuesday or
         Wednesday so the new budget gets full weekday data before the
         weekend hits.
       </Callout>
 
-      <ChapterDivider label="Section 4 — Reading the dashboard like a pro" />
+      <ChapterDivider label="Section 4, Reading the dashboard like a pro" />
 
       <h2 className="read-h2">What the columns are really telling you</h2>
 
@@ -181,12 +181,12 @@ export default function Ch8() {
       </p>
 
       <p>
-        <strong>If CPM is rising and CTR is dropping</strong> — your audience
+        <strong>If CPM is rising and CTR is dropping</strong>, your audience
         is burning out. Refresh the creative or expand the audience.
       </p>
 
       <p>
-        <strong>If CPM is stable but Cost per Result is rising</strong> —
+        <strong>If CPM is stable but Cost per Result is rising</strong> ,
         your hook is working (people see and notice the ad) but it&apos;s not
         converting on the action you optimized for. Check the click
         destination. Is the Spotify page doing its job? Is the YouTube
@@ -194,24 +194,24 @@ export default function Ch8() {
       </p>
 
       <p>
-        <strong>If CTR is high but Cost per Result is bad</strong> — same
+        <strong>If CTR is high but Cost per Result is bad</strong>, same
         problem. People click but don&apos;t take action. The ad is great.
         The destination is failing.
       </p>
 
       <p>
-        <strong>If Frequency is over 3 and CPM is climbing</strong> —
+        <strong>If Frequency is over 3 and CPM is climbing</strong> ,
         time to expand audience. Stack lookalikes. Add a new geography.
         Widen the age range.
       </p>
 
       <p>
-        <strong>If everything is good but spend isn&apos;t pacing</strong> —
+        <strong>If everything is good but spend isn&apos;t pacing</strong> ,
         Meta can&apos;t find enough people in your audience at your bid.
         Widen the audience.
       </p>
 
-      <ChapterDivider label="Section 5 — The 30-day commitment" />
+      <ChapterDivider label="Section 5, The 30-day commitment" />
 
       <h2 className="read-h2">Why 30 days, not 30 minutes</h2>
 
@@ -231,7 +231,7 @@ export default function Ch8() {
       <p>
         Most artists give up at day 6. They look at the dashboard, panic at
         a single bad day, kill everything, and decide ads &ldquo;don&apos;t
-        work for them.&rdquo; That&apos;s not the algorithm failing — that&apos;s
+        work for them.&rdquo; That&apos;s not the algorithm failing, that&apos;s
         impatience failing.
       </p>
 
@@ -248,7 +248,7 @@ export default function Ch8() {
         with that ROI.
       </Callout>
 
-      <ChapterDivider label="Section 6 — From here" />
+      <ChapterDivider label="Section 6, From here" />
 
       <h2 className="read-h2">You finished the book. Now run the play.</h2>
 

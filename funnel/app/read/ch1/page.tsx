@@ -13,12 +13,12 @@ export default function Ch1() {
   return (
     <ChapterShell id="ch1" particleVariant="blue">
       <Callout variant="watch">
-        When you hit Boost, Instagram doesn&apos;t help you grow. They help themselves get paid. Most artists don&apos;t know this — and that&apos;s the point.
+        When you hit Boost, Instagram doesn&apos;t help you grow. They help themselves get paid. Most artists don&apos;t know this, and that&apos;s the point.
       </Callout>
 
       <p>You&apos;ve done it. I&apos;ve done it. Every artist reading this has done it.</p>
 
-      <p>You drop a song. The video&apos;s clean. You feel like this is the one. You post it. It does <em>okay</em> — a few likes, your homies say &ldquo;hard&rdquo; in the comments, and then it dies. So you do what Instagram practically begs you to do. You tap that little blue button under the post. Boost. $50. Done.</p>
+      <p>You drop a song. The video&apos;s clean. You feel like this is the one. You post it. It does <em>okay</em>, a few likes, your homies say &ldquo;hard&rdquo; in the comments, and then it dies. So you do what Instagram practically begs you to do. You tap that little blue button under the post. Boost. $50. Done.</p>
 
       <p>For the next three days you watch the like count climb. 200 likes. 400. 800. It feels like something. Your phone buzzes. Strangers liked your video. Some of them even commented &ldquo;🔥&rdquo; or a string of emojis you don&apos;t recognize.</p>
 
@@ -26,7 +26,7 @@ export default function Ch1() {
 
       <p>You shrug. You tell yourself the song just wasn&apos;t it. You start working on the next one. And in three weeks, you do it all again.</p>
 
-      <ChapterDivider label="Section 1 — What boosting actually does" />
+      <ChapterDivider label="Section 1, What boosting actually does" />
 
       <h2 className="read-h2">What you&apos;re really paying for</h2>
 
@@ -42,7 +42,7 @@ export default function Ch1() {
 
       <p>So yeah, you got <CountUp to={400} /> likes. Congratulations. You also got zero of the things that actually move your career forward.</p>
 
-      <ChapterDivider label="Section 2 — Why it FEELS like it works" />
+      <ChapterDivider label="Section 2, Why it FEELS like it works" />
 
       <h2 className="read-h2">The dopamine trap</h2>
 
@@ -52,15 +52,15 @@ export default function Ch1() {
 
       <p>Instagram engineered that feeling. They literally hired neuroscientists to figure out which colors, sounds, and timings hit your brain hardest. The boost flow is one of the most addictive products on the planet. It&apos;s designed to feel like winning even when you&apos;re losing.</p>
 
-      <p>And artists are especially vulnerable. We&apos;re creative people. We&apos;re emotional. We need the win. We need someone — anyone — to tell us the song is good. The boost button gives you 400 strangers saying &ldquo;yes&rdquo; in the form of a like. Your brain doesn&apos;t care that they&apos;re fake-engaged. It just feels the yes.</p>
+      <p>And artists are especially vulnerable. We&apos;re creative people. We&apos;re emotional. We need the win. We need someone, anyone, to tell us the song is good. The boost button gives you 400 strangers saying &ldquo;yes&rdquo; in the form of a like. Your brain doesn&apos;t care that they&apos;re fake-engaged. It just feels the yes.</p>
 
       <p><strong>That&apos;s the trap.</strong> You&apos;re not paying for marketing. You&apos;re paying for a feeling.</p>
 
       <Callout variant="watch">
-        If you can&apos;t tell me what 100 of those likers&apos; usernames were, what playlists they save songs to, or what city they live in — you didn&apos;t buy fans. You bought a screenshot.
+        If you can&apos;t tell me what 100 of those likers&apos; usernames were, what playlists they save songs to, or what city they live in, you didn&apos;t buy fans. You bought a screenshot.
       </Callout>
 
-      <ChapterDivider label="Section 3 — Why it's NOT working" />
+      <ChapterDivider label="Section 3, Why it's NOT working" />
 
       <h2 className="read-h2">The five things you didn&apos;t get</h2>
 
@@ -70,13 +70,13 @@ export default function Ch1() {
 
       <p><strong>2. Streams.</strong> Likes on Instagram do not become streams on Spotify. There is no link between the two. None. A boost is not a stream-getting tool. It was never built to be one.</p>
 
-      <p><strong>3. ROI.</strong> If you&apos;re selling shows, merch, or trying to flip those listeners into paid streams — boosting can&apos;t track any of it. The button doesn&apos;t even let you put a tracking pixel on your website. So even if one of those 400 likers somehow bought a ticket, you&apos;d never know which ad did it.</p>
+      <p><strong>3. ROI.</strong> If you&apos;re selling shows, merch, or trying to flip those listeners into paid streams, boosting can&apos;t track any of it. The button doesn&apos;t even let you put a tracking pixel on your website. So even if one of those 400 likers somehow bought a ticket, you&apos;d never know which ad did it.</p>
 
-      <p><strong>4. Usable data.</strong> This is the one that hurts. When you boost, all the data — who clicked, who watched, who actually engaged — stays inside Instagram. You can&apos;t pull it out. You can&apos;t retarget those people later. You can&apos;t build a custom audience from them. The data <em>belongs to Meta</em>. You just rent the result for 3 days.</p>
+      <p><strong>4. Usable data.</strong> This is the one that hurts. When you boost, all the data, who clicked, who watched, who actually engaged, stays inside Instagram. You can&apos;t pull it out. You can&apos;t retarget those people later. You can&apos;t build a custom audience from them. The data <em>belongs to Meta</em>. You just rent the result for 3 days.</p>
 
       <p><strong>5. A foundation.</strong> Every $50 boost is a fresh start. Nothing compounds. Nothing builds. You can boost 100 posts in a row and on post 101, you&apos;re starting from zero. That&apos;s by design.</p>
 
-      <ChapterDivider label="Section 4 — The math" />
+      <ChapterDivider label="Section 4, The math" />
 
       <h2 className="read-h2">$50 vs $50</h2>
 
@@ -94,7 +94,7 @@ export default function Ch1() {
         I&apos;ve had clients spend $300 on a boost and get zero new monthly listeners. The same $300 in Ads Manager, run on a 5-day test, has pulled 2,000+ new monthly listeners. <strong>Same money. Same song. 1,000x return.</strong>
       </Callout>
 
-      <ChapterDivider label="Section 5 — Why the button exists" />
+      <ChapterDivider label="Section 5, Why the button exists" />
 
       <h2 className="read-h2">Follow the money</h2>
 
@@ -114,7 +114,7 @@ export default function Ch1() {
         The boost button is not a marketing tool for you. It&apos;s a profit margin tool for Meta. The fact that it&apos;s easy and feels good is the bait.
       </Callout>
 
-      <ChapterDivider label="Section 6 — The way out" />
+      <ChapterDivider label="Section 6, The way out" />
 
       <h2 className="read-h2">Tomorrow morning</h2>
 
@@ -126,7 +126,7 @@ export default function Ch1() {
 
       <p>I don&apos;t care if the post is on fire. I don&apos;t care if your manager is yelling at you to put money behind it. I don&apos;t care if a verified account just commented &ldquo;💯.&rdquo; Don&apos;t hit boost.</p>
 
-      <p>Save that $50. Read the next chapter. By the time you finish this book, you&apos;ll know exactly where to put it instead — and that $50 will be the first dollar that actually compounds for you instead of disappearing.</p>
+      <p>Save that $50. Read the next chapter. By the time you finish this book, you&apos;ll know exactly where to put it instead, and that $50 will be the first dollar that actually compounds for you instead of disappearing.</p>
 
       <p>The boost button is the past. You&apos;re building a future.</p>
 

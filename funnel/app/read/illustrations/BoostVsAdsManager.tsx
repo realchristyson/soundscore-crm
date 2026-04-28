@@ -27,7 +27,7 @@ export default function BoostVsAdsManager() {
         <filter id="bvm-glow"><feGaussianBlur stdDeviation="6" /></filter>
       </defs>
 
-      {/* LEFT — boost button */}
+      {/* LEFT, boost button */}
       <g transform="translate(40,40)">
         <text x="0" y="0" fill="#A0A0A0" fontFamily="var(--font-jetbrains), monospace" fontSize="11" letterSpacing="3">BOOST POST</text>
         <rect x="0" y="20" width="320" height="320" rx="12" fill="#0a0a0a" stroke="rgba(255,255,255,0.08)" />
@@ -37,7 +37,7 @@ export default function BoostVsAdsManager() {
         <rect x="76" y="74" width="80" height="8" fill="#333" rx="2" />
         <rect x="40" y="100" width="240" height="100" fill="#222" />
         <text x="160" y="155" textAnchor="middle" fill="#555" fontSize="13" fontFamily="var(--font-inter)">your post</text>
-        {/* boost button — single big blue */}
+        {/* boost button, single big blue */}
         <rect x="60" y="270" width="200" height="48" rx="6" fill="url(#bvm-blue)" filter="url(#bvm-glow)" opacity="0.9" />
         <rect x="60" y="270" width="200" height="48" rx="6" fill="url(#bvm-blue)" />
         <text x="160" y="300" textAnchor="middle" fill="#fff" fontFamily="var(--font-anton), sans-serif" fontSize="20" letterSpacing="1">BOOST POST</text>
@@ -49,7 +49,7 @@ export default function BoostVsAdsManager() {
         <text x="0" y="0" textAnchor="middle" fill="#fff" fontFamily="var(--font-anton), sans-serif" fontSize="44" letterSpacing="2">VS</text>
       </g>
 
-      {/* RIGHT — Ads Manager dashboard */}
+      {/* RIGHT, Ads Manager dashboard */}
       <g transform="translate(440,40)">
         <text x="0" y="0" fill="#00FF7F" fontFamily="var(--font-jetbrains), monospace" fontSize="11" letterSpacing="3">ADS MANAGER</text>
         <rect x="0" y="20" width="320" height="320" rx="12" fill="#0a0a0a" stroke="url(#bvm-green)" />

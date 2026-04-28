@@ -6,7 +6,7 @@ import ProgressBar from "./components/ProgressBar";
 import ThemeShell from "./components/ThemeShell";
 
 export const metadata: Metadata = {
-  title: "The $5/Day Method — Read",
+  title: "The $5/Day Method, Read",
   description: "The Meta Ads playbook for independent artists. By Chris Tyson.",
 };
 

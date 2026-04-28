@@ -26,7 +26,7 @@ export default function MoneyMath() {
         </linearGradient>
       </defs>
 
-      {/* LEFT — boost */}
+      {/* LEFT, boost */}
       <g transform="translate(40,40)">
         <text x="0" y="0" fill="#FF6677" fontFamily="var(--font-jetbrains)" fontSize="11" letterSpacing="3">$50 BOOST</text>
         <rect x="0" y="20" width="340" height="280" rx="10" fill="#0a0a0a" stroke="rgba(255,51,85,0.4)" />
@@ -38,7 +38,7 @@ export default function MoneyMath() {
         <text x="20" y="252" fill="url(#mm-red)" fontFamily="var(--font-anton)" fontSize="34">= $0 BACK</text>
       </g>
 
-      {/* RIGHT — Meta Ad */}
+      {/* RIGHT, Meta Ad */}
       <g transform="translate(420,40)">
         <text x="0" y="0" fill="#00FF7F" fontFamily="var(--font-jetbrains)" fontSize="11" letterSpacing="3">$50 META AD</text>
         <rect x="0" y="20" width="340" height="280" rx="10" fill="#0a0a0a" stroke="url(#mm-green)" />

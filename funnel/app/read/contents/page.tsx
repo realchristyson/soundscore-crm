@@ -33,9 +33,9 @@ export default function Contents() {
       </motion.h1>
 
       {[
-        { label: "Part 1 — The Lie", color: "var(--meta-blue-bright)", chapters: part1 },
-        { label: "Part 2 — The Setup", color: "var(--money-green-bright)", chapters: part2 },
-        { label: "Part 3 — The System", color: "var(--money-green-bright)", chapters: part3 },
+        { label: "Part 1, The Lie", color: "var(--meta-blue-bright)", chapters: part1 },
+        { label: "Part 2, The Setup", color: "var(--money-green-bright)", chapters: part2 },
+        { label: "Part 3, The System", color: "var(--money-green-bright)", chapters: part3 },
       ].map((sec, si) => (
         <motion.section
           key={sec.label}

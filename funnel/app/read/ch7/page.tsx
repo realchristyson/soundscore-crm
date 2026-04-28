@@ -17,7 +17,7 @@ export default function Ch7() {
 
       <p>
         A Lookalike Audience is Meta&apos;s algorithm finding people who behave
-        like your best fans — even if they&apos;ve never heard of you.
+        like your best fans, even if they&apos;ve never heard of you.
       </p>
 
       <Callout variant="watch">
@@ -27,14 +27,14 @@ export default function Ch7() {
         technique) is in progress.
       </Callout>
 
-      <ChapterDivider label="Section 1 — The secret weapon" />
+      <ChapterDivider label="Section 1, The secret weapon" />
 
       <h2 className="read-h2">What you&apos;ll do in this chapter</h2>
 
       <ol>
         <li>Build a Custom Audience from IG engagers, video viewers, or profile visitors</li>
         <li>Create your first Lookalike from that source</li>
-        <li>Pick a Lookalike % — start with 1-3%</li>
+        <li>Pick a Lookalike %, start with 1-3%</li>
         <li>Use the Lookalike as the audience in a new ad set</li>
         <li>Stack 1% + 3% + 5% lookalikes for broader reach with quality</li>
       </ol>
