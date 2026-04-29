@@ -3,12 +3,37 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+
+interface SessionData {
+  firstName: string;
+  customerEmail: string;
+  customerName: string;
+}
 
 export default function ThankYou() {
   const [ready, setReady] = useState(false);
+  const [sessionData, setSessionData] = useState<SessionData | null>(null);
+  const searchParams = useSearchParams();
+
   useEffect(() => {
     setReady(true);
-  }, []);
+
+    // Fetch session data if paymentIntentId is in URL
+    const pid = searchParams.get("pid");
+    if (pid) {
+      fetch(`/api/get-session?paymentIntentId=${pid}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.firstName) {
+            setSessionData(data);
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to fetch session:", err);
+        });
+    }
+  }, [searchParams]);
 
   return (
     <main
@@ -127,10 +152,22 @@ export default function ThankYou() {
             marginBottom: "2.75rem",
           }}
         >
-          Welcome to <strong style={{ color: "#F5F5F5" }}>The $5/Day Method</strong>.
-          The full book is unlocked, your worksheets save as you read, and the
-          system works as long as you actually run it. Don&apos;t just read.
-          Apply. Test. Track.
+          {sessionData?.firstName ? (
+            <>
+              Hey <strong style={{ color: "#F5F5F5" }}>{sessionData.firstName}</strong>
+              {" "}— welcome to <strong style={{ color: "#F5F5F5" }}>The $5/Day Method</strong>.
+              The full book is unlocked, your worksheets save as you read, and the
+              system works as long as you actually run it. Don&apos;t just read.
+              Apply. Test. Track.
+            </>
+          ) : (
+            <>
+              Welcome to <strong style={{ color: "#F5F5F5" }}>The $5/Day Method</strong>.
+              The full book is unlocked, your worksheets save as you read, and the
+              system works as long as you actually run it. Don&apos;t just read.
+              Apply. Test. Track.
+            </>
+          )}
         </motion.p>
 
         {/* primary CTA */}

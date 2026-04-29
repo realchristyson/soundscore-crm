@@ -150,7 +150,7 @@ export default function PriceSection() {
                 </div>
 
                 <MagneticButton
-                  href="#"
+                  href="#checkout"
                   className="group mt-8 inline-flex w-full items-center justify-center gap-3 rounded-md bg-money-green-bright px-8 py-5 font-display text-[20px] uppercase tracking-[0.08em] text-black shadow-[0_25px_70px_-15px_rgba(0,255,127,0.7)] transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-[0_35px_90px_-15px_rgba(0,255,127,0.9)] sm:text-[24px]"
                 >
                   <Lock className="size-5" />

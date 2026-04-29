@@ -8,6 +8,7 @@ import TransformationSection from "./components/TransformationSection";
 import TestimonialsSection from "./components/TestimonialsSection";
 import AuthorSection from "./components/AuthorSection";
 import PriceSection from "./components/PriceSection";
+import CheckoutSection from "./components/CheckoutSection";
 import FAQSection from "./components/FAQSection";
 import FinalCTASection from "./components/FinalCTASection";
 import Footer from "./components/Footer";
@@ -26,6 +27,7 @@ export default function Page() {
         <TestimonialsSection />
         <AuthorSection />
         <PriceSection />
+        <CheckoutSection />
         <FAQSection />
         <FinalCTASection />
         <Footer />
