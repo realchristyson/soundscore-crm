@@ -314,62 +314,182 @@ function ThankYouInner() {
           </ol>
         </motion.div>
 
-        {/* community soft mention */}
+        {/* book a strategy call */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: ready ? 1 : 0 }}
-          transition={{ duration: 0.6, delay: 1 }}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: ready ? 1 : 0, y: ready ? 0 : 12 }}
+          transition={{ duration: 0.7, delay: 1 }}
           style={{
-            padding: "1.75rem",
-            borderRadius: 12,
-            border: "1px solid rgba(0,255,127,0.3)",
+            padding: "2rem 1.75rem 1.85rem",
+            borderRadius: 14,
+            border: "1.5px solid rgba(0,255,127,0.55)",
             background:
-              "linear-gradient(135deg, rgba(0,255,127,0.05), rgba(30,136,255,0.04))",
+              "linear-gradient(135deg, rgba(0,255,127,0.10), rgba(30,136,255,0.06) 60%, rgba(0,0,0,0.5))",
             marginBottom: "2.5rem",
+            position: "relative",
+            overflow: "hidden",
+            boxShadow:
+              "0 30px 80px -20px rgba(0,255,127,0.35), 0 0 0 1px rgba(0,255,127,0.15)",
           }}
         >
+          {/* corner accent */}
+          <div
+            aria-hidden
+            style={{
+              position: "absolute",
+              top: -50,
+              right: -50,
+              width: 180,
+              height: 180,
+              borderRadius: "50%",
+              background:
+                "radial-gradient(circle, rgba(0,255,127,0.25) 0%, transparent 65%)",
+              filter: "blur(20px)",
+              pointerEvents: "none",
+            }}
+          />
+
+          {/* limited spots tag */}
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "5px 12px",
+              border: "1px solid rgba(255,59,48,0.45)",
+              background: "rgba(255,59,48,0.08)",
+              borderRadius: 999,
+              fontFamily: "var(--font-jetbrains), monospace",
+              fontSize: 10,
+              letterSpacing: "0.4em",
+              color: "#FF6B5C",
+              textTransform: "uppercase",
+              fontWeight: 700,
+              marginBottom: 14,
+            }}
+          >
+            <span
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: "50%",
+                background: "#FF6B5C",
+                boxShadow: "0 0 10px #FF6B5C",
+              }}
+            />
+            Limited spots this week
+          </div>
+
           <div
             style={{
               fontFamily: "var(--font-jetbrains), monospace",
               fontSize: 11,
               letterSpacing: "0.4em",
-              color: "rgba(245,245,245,0.5)",
+              color: "#00FF7F",
               fontWeight: 700,
               textTransform: "uppercase",
               marginBottom: 10,
             }}
           >
-            When you&apos;re ready for the next level
+            ⚠ Important · Read this before you start
           </div>
+
           <div
             style={{
               fontFamily: "var(--font-anton), sans-serif",
-              fontSize: 26,
-              lineHeight: 1.1,
+              fontSize: "clamp(28px, 4.2vw, 38px)",
+              lineHeight: 1.05,
+              letterSpacing: "-0.005em",
               marginBottom: 14,
+              maxWidth: 560,
             }}
           >
-            Join artists already running the play inside the Skool community.
+            Book your free 1-on-1 strategy call with{" "}
+            <span style={{ color: "#00FF7F" }}>Chris Tyson</span> and his team.
           </div>
+
+          <p
+            style={{
+              fontSize: 15.5,
+              lineHeight: 1.55,
+              color: "rgba(245,245,245,0.85)",
+              marginBottom: 12,
+              maxWidth: 580,
+            }}
+          >
+            The book gives you the system. The call makes it personal. Chris
+            and his team will look at <strong style={{ color: "#F5F5F5" }}>your
+            music, your numbers, and your current setup</strong> and tell you
+            exactly what to launch first so you don&apos;t waste a single dollar
+            of that $5/day.
+          </p>
+
+          <p
+            style={{
+              fontSize: 14,
+              lineHeight: 1.55,
+              color: "rgba(245,245,245,0.65)",
+              marginBottom: 22,
+              maxWidth: 580,
+            }}
+          >
+            This call isn&apos;t available to the public. It&apos;s only being
+            offered to new $5/Day Method buyers, and only a handful of slots
+            open up each week. Once they&apos;re gone for this week,
+            they&apos;re gone.
+          </p>
+
           <a
-            href="https://www.musicfundingacademy.com/skool"
+            href="https://api.leadconnectorhq.com/widget/bookings/musicfunding/music"
             target="_blank"
             rel="noreferrer"
             style={{
-              display: "inline-block",
-              fontFamily: "var(--font-jetbrains), monospace",
-              fontSize: 12,
-              letterSpacing: "0.35em",
-              fontWeight: 700,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 14,
+              background: "#00FF7F",
+              color: "#000",
+              padding: "1rem 1.6rem",
+              fontFamily: "var(--font-anton), sans-serif",
+              fontSize: 22,
+              letterSpacing: "0.04em",
               textTransform: "uppercase",
-              color: "#00FF7F",
+              borderRadius: 6,
               textDecoration: "none",
-              borderBottom: "1px solid rgba(0,255,127,0.5)",
-              paddingBottom: 4,
+              boxShadow:
+                "0 20px 50px -10px rgba(0,255,127,0.55), 0 0 0 1px rgba(0,255,127,0.4)",
             }}
           >
-            Music Funding Academy →
+            Book My Call
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 30,
+                height: 30,
+                background: "#000",
+                color: "#00FF7F",
+                borderRadius: "50%",
+                fontSize: 16,
+              }}
+            >
+              →
+            </span>
           </a>
+
+          <div
+            style={{
+              marginTop: 16,
+              fontFamily: "var(--font-jetbrains), monospace",
+              fontSize: 11,
+              letterSpacing: "0.3em",
+              color: "rgba(245,245,245,0.45)",
+              textTransform: "uppercase",
+            }}
+          >
+            30 min · Free · No obligation
+          </div>
         </motion.div>
 
         {/* footer line */}
