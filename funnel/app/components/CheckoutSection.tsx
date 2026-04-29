@@ -41,9 +41,13 @@ const stripeAppearance = {
 function PaymentForm({
   clientSecret,
   onBack,
+  customerName,
+  customerEmail,
 }: {
   clientSecret: string;
   onBack: () => void;
+  customerName: string;
+  customerEmail: string;
 }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -77,6 +81,13 @@ function PaymentForm({
     }
 
     if (paymentIntent?.status === 'succeeded') {
+      // Fire-and-forget: add buyer to GHL with "$5/Day Buyer" tag
+      fetch('/api/notify-ghl', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: customerName, email: customerEmail }),
+      }).catch(() => {}); // don't block redirect on GHL errors
+
       window.location.href = `/thank-you?pid=${paymentIntent.id}`;
     }
   };
@@ -304,6 +315,8 @@ export default function CheckoutSection() {
                       setStep('info');
                       setClientSecret('');
                     }}
+                    customerName={formData.name}
+                    customerEmail={formData.email}
                   />
                 </Elements>
               )}
