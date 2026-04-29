@@ -40,10 +40,23 @@ export default function AuthorSection() {
               />
               <div className="absolute inset-0 grid-bg opacity-30" />
               <div className="absolute inset-0 scanlines opacity-40" />
+              <img
+                src="/images/chris.jpg"
+                alt="Chris Tyson"
+                className="absolute inset-0 size-full object-cover"
+              />
+              <div
+                aria-hidden
+                className="absolute inset-x-0 bottom-0 h-2/5"
+                style={{
+                  background:
+                    "linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.85) 100%)",
+                }}
+              />
               <div className="absolute inset-0 flex items-end p-7">
-                <div>
+                <div className="relative">
                   <div className="mono-accent text-[10px] uppercase tracking-[0.3em] text-money-green-bright">
-                    [Photo Placeholder]
+                    Author
                   </div>
                   <div
                     className="headline-mega mt-2 text-off-white"
