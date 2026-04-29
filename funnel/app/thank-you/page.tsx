@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
 interface SessionData {
@@ -11,7 +11,7 @@ interface SessionData {
   customerName: string;
 }
 
-export default function ThankYou() {
+function ThankYouInner() {
   const [ready, setReady] = useState(false);
   const [sessionData, setSessionData] = useState<SessionData | null>(null);
   const searchParams = useSearchParams();
@@ -396,5 +396,13 @@ export default function ThankYou() {
         </motion.div>
       </div>
     </main>
+  );
+}
+
+export default function ThankYou() {
+  return (
+    <Suspense fallback={null}>
+      <ThankYouInner />
+    </Suspense>
   );
 }
